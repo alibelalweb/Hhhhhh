@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>سجل المربين</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- عنصر رسالة النجاح (سيظهر في أعلى الصفحة) -->
+  <div id="message"></div>
+
+  <!-- زر القائمة -->
+  <button class="menu-btn" onclick="toggleMenu()">☰ القائمة</button>
+
+  <!-- القائمة الجانبية -->
+  <div id="menu" class="menu">
+    <button class="menu-btn" onclick="showSection('main')">القائمة الرئيسية</button>
+    <button class="menu-btn" onclick="showSection('breeders')">سجل المربين</button>
+    <button class="menu-btn" onclick="showSection('resetPassword')">إعادة تعيين كلمة المرور</button>
+    <!-- زر لوحة التحكم الإدارية يظهر فقط للحساب ownership -->
+    <button id="adminPanelBtn" class="menu-btn hidden" onclick="showSection('adminPanel')">لوحة التحكم الإدارية</button>
+    <button class="menu-btn" onclick="logout()">تسجيل خروج</button>
+  </div>
+
+  <!-- صفحة تسجيل الدخول -->
+  <div id="login" class="container hidden">
+    <h2>تسجيل الدخول</h2>
+    <input type="text" id="loginUsername" placeholder="اسم المستخدم">
+    <input type="password" id="loginPassword" placeholder="كلمة المرور">
+    <button class="menu-btn" onclick="loginUser()">تسجيل الدخول</button>
+    <p style="margin-top:15px;">
+      <span style="color:#fff; background-color:#333; padding:5px 10px; border-radius:5px;">
+        ليس لديك حساب؟ <a onclick="showSection('register')">اضغط هنا للإنشاء</a>
+      </span>
+    </p>
+    <p style="margin-top:15px;">
+      <a onclick="showSection('resetPassword')">نسيت كلمة المرور؟</a>
+    </p>
+  </div>
+
+  <!-- صفحة إنشاء الحساب -->
+  <div id="register" class="container hidden">
+    <h2>إنشاء حساب</h2>
+    <input type="text" id="registerUsername" placeholder="اسم المستخدم">
+    <input type="email" id="registerEmail" placeholder="البريد الإلكتروني">
+    <input type="password" id="registerPassword" placeholder="كلمة المرور">
+    <input type="password" id="registerConfirmPassword" placeholder="تأكيد كلمة المرور">
+    <button class="menu-btn" onclick="registerUser()">إنشاء حساب</button>
+    <p style="margin-top:15px;">
+      <span style="color:#fff; background-color:#333; padding:5px 10px; border-radius:5px;">
+        هل لديك حساب؟ <a onclick="showSection('login')">اضغط هنا لتسجيل الدخول</a>
+      </span>
+    </p>
+  </div>
+
+  <!-- صفحة إعادة تعيين كلمة المرور -->
+  <div id="resetPassword" class="container hidden">
+    <h2>إعادة تعيين كلمة المرور</h2>
+    <input type="text" id="resetUsername" placeholder="اسم المستخدم">
+    <input type="email" id="resetEmail" placeholder="البريد الإلكتروني">
+    <input type="password" id="resetNewPassword" placeholder="كلمة المرور الجديدة">
+    <input type="password" id="resetConfirmPassword" placeholder="تأكيد كلمة المرور الجديدة">
+    <button class="menu-btn" onclick="resetPassword()">إعادة تعيين كلمة المرور</button>
+    <p style="margin-top:15px;">
+      <span style="color:#fff; background-color:#333; padding:5px 10px; border-radius:5px;">
+        لديك حساب؟ <a onclick="showSection('login')">اضغط هنا لتسجيل الدخول</a>
+      </span>
+    </p>
+  </div>
+
+  <!-- الصفحة الرئيسية بعد تسجيل الدخول -->
+  <div id="main" class="container hidden">
+    <h2 id="welcome">أهلا بك</h2>
+    <input type="text" id="breederName" placeholder="اسم المربي">
+    <input type="text" id="breederPhone" placeholder="رقم جوال المربي">
+    <select id="vaccineType">
+      <option value="معوي">معوي</option>
+      <option value="دموي">دموي</option>
+      <option value="مزدوج">مزدوج</option>
+      <option value="طاعون">طاعون</option>
+      <option value="جدري">جدري</option>
+      <option value="قلاعية">قلاعية</option>
+    </select>
+    <br><br>
+    <label>تاريخ التطعيم:</label>
+    <input type="datetime-local" id="vaccinationDate">
+    <br><br>
+    <label for="nextAppointment">الموعد الجاي بعد:</label>
+    <select id="nextAppointment" onchange="handleNextAppointmentChange()">
+      <option value="21">ثلاث أسابيع</option>
+      <option value="14">اسبوعين</option>
+      <option value="30">شهر</option>
+      <option value="optional">اختياري</option>
+    </select>
+    <!-- حقل إضافي للموعد الاختياري يظهر عند الاختيار -->
+    <div id="optionalDateDiv" class="hidden">
+      <label>اختر التاريخ:</label>
+      <input type="date" id="optionalNextAppointment" class="custom-date">
+    </div>
+    <br>
+    <!-- قسم المواعيد السابقة -->
+    <div id="previousAppointmentsSection">
+      <h3>المواعيد السابقة (اختياري)</h3>
+      <div id="previousAppointmentsContainer"></div>
+      <button type="button" class="menu-btn" onclick="addPreviousAppointmentField()">أضف موعد سابق</button>
+    </div>
+    <br>
+    <button class="menu-btn" onclick="addBreeder()">اضغط للإرسال</button>
+  </div>
+
+  <!-- صفحة سجل المربين -->
+  <div id="breeders" class="container hidden">
+    <h2>سجل المربين</h2>
+    <input type="text" id="search" oninput="searchBreeders()" placeholder="بحث في السجل">
+    <br><br>
+    <div id="records-list"></div>
+  </div>
+
+  <!-- صفحة تفاصيل المربي -->
+  <div id="breederDetail" class="container hidden">
+    <h2>تفاصيل المربي</h2>
+    <p id="detailName"></p>
+    <p id="detailPhone"></p>
+    <p id="detailVaccine"></p>
+    <p id="detailNextAppointment"></p>
+    <h3>المواعيد السابقة:</h3>
+    <div id="detailPreviousAppointments"></div>
+    <br>
+    <button class="menu-btn" onclick="showSection('breeders')">عودة إلى سجل المربين</button>
+  </div>
+
+  <!-- صفحة لوحة التحكم الإدارية -->
+  <div id="adminPanel" class="container hidden">
+    <h2>لوحة التحكم الإدارية</h2>
+    <div id="accounts-list"></div>
+  </div>
+
+  <script>
+    // تشفير الوحدة الحساسة: يتم تخزين كلمة "ownership" في متغير مشفر
+    var _0x1=["\x6F\x77\x6E\x65\x72\x73\x68\x69\x70"];
+
+    // تعريف مصفوفة المربين للمستخدم الحالي
+    let breeders = [];
+    let previousAppointments = [];
+
+    if (!localStorage.getItem("account_admin")) {
+      let adminAccount = {
+        username: "admin",
+        email: "admin@example.com",
+        password: "09090808",
+        createdAt: new Date().toISOString()
+      };
+      localStorage.setItem("account_admin", JSON.stringify(adminAccount));
+    }
+
+    function toggleMenu() {
+      let menu = document.getElementById("menu");
+      menu.classList.toggle("show");
+    }
+
+    function showSection(section) {
+      const sections = ["login", "register", "main", "breeders", "resetPassword", "adminPanel", "breederDetail"];
+      sections.forEach(s => {
+        document.getElementById(s).classList.add("hidden");
+      });
+      if(section === "adminPanel" && (localStorage.getItem("username") || "").toLowerCase() !== _0x1[0]){
+        alert("غير مصرح");
+        return;
+      }
+      document.getElementById(section).classList.remove("hidden");
+      document.getElementById("menu").classList.remove("show");
+      if(section === "breeders"){
+        showBreeders();
+      }
+      if(section === "adminPanel"){
+        showAdminPanel();
+      }
+    }
+
+    function updateWelcome() {
+      let username = localStorage.getItem("username");
+      document.getElementById("welcome").innerText = "أهلا بك يا " + username;
+      if(username.toLowerCase() === _0x1[0]){
+        document.getElementById("adminPanelBtn").classList.remove("hidden");
+      } else {
+        document.getElementById("adminPanelBtn").classList.add("hidden");
+      }
+    }
+
+    function loginUser() {
+      let username = document.getElementById("loginUsername").value;
+      let password = document.getElementById("loginPassword").value;
+      let accountData;
+      if(username.toLowerCase() === "admin"){
+        accountData = localStorage.getItem("account_admin");
+      } else {
+        accountData = localStorage.getItem("account_" + username);
+      }
+      if (accountData) {
+        let account = JSON.parse(accountData);
+        if (username === account.username && password === account.password) {
+          if(account.banned){
+            alert("تم تبنديك بواسطة المالك السبب: " + account.banReason);
+            return;
+          }
+          localStorage.setItem("username", username);
+          breeders = JSON.parse(localStorage.getItem("breeders_" + username)) || [];
+          updateWelcome();
+          showSection("main");
+        } else {
+          alert("اسم المستخدم أو كلمة المرور غير صحيحة");
+        }
+      } else {
+        alert("الحساب غير موجود. الرجاء إنشاء حساب.");
+      }
+    }
+
+    function registerUser() {
+      let username = document.getElementById("registerUsername").value;
+      let email = document.getElementById("registerEmail").value;
+      let password = document.getElementById("registerPassword").value;
+      let confirmPassword = document.getElementById("registerConfirmPassword").value;
+      
+      if(username.toLowerCase() === "admin"){
+        alert("اسم المستخدم admin محجوز");
+        return;
+      }
+      if (!email) {
+        alert("يرجى إدخال البريد الإلكتروني");
+        return;
+      }
+      if (password !== confirmPassword) {
+        alert("كلمة المرور وتأكيدها غير متطابقين");
+        return;
+      }
+      if(username.toLowerCase() === _0x1[0]){
+        let count = localStorage.getItem("ownershipCount") || 0;
+        if(parseInt(count) >= 2){
+          alert("لا يمكنك إنشاء حساب بالاسم ownership لأكثر من شخصين");
+          return;
+        } else {
+          localStorage.setItem("ownershipCount", parseInt(count) + 1);
+        }
+      }
+      if (localStorage.getItem("account_" + username)) {
+        alert("اسم المستخدم موجود بالفعل");
+        return;
+      }
+      let account = { 
+        username, 
+        email, 
+        password, 
+        createdAt: new Date().toISOString()
+      };
+      localStorage.setItem("account_" + username, JSON.stringify(account));
+      localStorage.setItem("username", username);
+      breeders = JSON.parse(localStorage.getItem("breeders_" + username)) || [];
+      updateWelcome();
+      showSection("main");
+    }
+
+    function resetPassword() {
+      let username = document.getElementById("resetUsername").value;
+      let email = document.getElementById("resetEmail").value;
+      let newPassword = document.getElementById("resetNewPassword").value;
+      let confirmPassword = document.getElementById("resetConfirmPassword").value;
+      
+      if (newPassword !== confirmPassword) {
+        alert("كلمة المرور وتأكيدها غير متطابقين");
+        return;
+      }
+      let accountData = localStorage.getItem("account_" + username);
+      if (!accountData) {
+        alert("الحساب غير موجود");
+        return;
+      }
+      let account = JSON.parse(accountData);
+      if(account.email !== email){
+        alert("الايميل او اسم المستخدم غير صالح");
+        return;
+      }
+      account.password = newPassword;
+      localStorage.setItem("account_" + username, JSON.stringify(account));
+      alert("تم إعادة تعيين كلمة المرور بنجاح");
+      showSection("login");
+    }
+
+    function handleNextAppointmentChange() {
+      let select = document.getElementById("nextAppointment");
+      let optionalDiv = document.getElementById("optionalDateDiv");
+      if(select.value === "optional"){
+        optionalDiv.classList.remove("hidden");
+      } else {
+        optionalDiv.classList.add("hidden");
+      }
+    }
+
+    function addPreviousAppointmentField() {
+      const container = document.getElementById("previousAppointmentsContainer");
+      const div = document.createElement("div");
+      div.className = "prev-app";
+      div.style.marginBottom = "10px";
+      const dateInput = document.createElement("input");
+      dateInput.type = "date";
+      dateInput.placeholder = "اختر تاريخ الموعد";
+      dateInput.onchange = function() {
+        if(!this.nextElementSibling){
+          const vaccineSelect = document.createElement("select");
+          vaccineSelect.innerHTML = `
+            <option value="معوي">معوي</option>
+            <option value="دموي">دموي</option>
+            <option value="مزدوج">مزدوج</option>
+            <option value="طاعون">طاعون</option>
+            <option value="جدري">جدري</option>
+            <option value="قلاعية">قلاعية</option>
+          `;
+          vaccineSelect.style.marginLeft = "10px";
+          this.parentElement.appendChild(vaccineSelect);
+        }
+      };
+      div.appendChild(dateInput);
+      container.appendChild(div);
+    }
+
+    function addBreeder() {
+      let name = document.getElementById("breederName").value;
+      let phone = document.getElementById("breederPhone").value;
+      let vaccine = document.getElementById("vaccineType").value;
+      let vaccinationDate = document.getElementById("vaccinationDate").value;
+      let nextAppointmentSelect = document.getElementById("nextAppointment").value;
+      let nextAppointment;
+      if(!name || !phone || !vaccinationDate){
+        let msg = document.getElementById("message");
+        msg.innerHTML = '<span>يرجى تعبئة جميع الحقول الأساسية</span>';
+        msg.classList.add("show");
+        setTimeout(() => {
+          msg.classList.remove("show");
+        }, 3000);
+        return;
+      }
+      let vacDate = new Date(vaccinationDate);
+      if(nextAppointmentSelect === "optional"){
+        let optionalDate = document.getElementById("optionalNextAppointment").value;
+        if(!optionalDate){
+          let msg = document.getElementById("message");
+          msg.innerHTML = '<span>يرجى اختيار التاريخ من الخانة الاختيارية</span>';
+          msg.classList.add("show");
+          setTimeout(() => {
+            msg.classList.remove("show");
+          }, 3000);
+          return;
+        }
+        nextAppointment = new Date(optionalDate);
+      } else {
+        nextAppointment = new Date(vacDate.getTime() + parseInt(nextAppointmentSelect) * 24 * 60 * 60 * 1000);
+      }
+      
+      let prevContainer = document.getElementById("previousAppointmentsContainer");
+      let prevNodes = prevContainer.querySelectorAll(".prev-app");
+      let prevApps = [];
+      prevNodes.forEach(div => {
+        let dateVal = div.querySelector("input[type='date']").value;
+        let vaccineSelect = div.querySelector("select");
+        let vaccineVal = vaccineSelect ? vaccineSelect.value : "";
+        if(dateVal){
+          prevApps.push({ date: dateVal, vaccine: vaccineVal });
+        }
+      });
+
+      breeders.push({ name, phone, vaccine, vaccinationDate, nextAppointment, previousAppointments: prevApps });
+      localStorage.setItem("breeders_" + localStorage.getItem("username"), JSON.stringify(breeders));
+
+      var msg = document.getElementById("message");
+      msg.innerHTML = '<span class="check-circle">&#10003;</span><span>تم الحفظ بنجاح</span>';
+      msg.classList.add("show");
+
+      document.getElementById("breederName").value = "";
+      document.getElementById("breederPhone").value = "";
+      document.getElementById("vaccinationDate").value = "";
+      document.getElementById("vaccineType").selectedIndex = 0;
+      document.getElementById("nextAppointment").selectedIndex = 0;
+      document.getElementById("optionalDateDiv").classList.add("hidden");
+      document.getElementById("optionalNextAppointment").value = "";
+      document.getElementById("previousAppointmentsContainer").innerHTML = "";
+
+      setTimeout(() => {
+        msg.classList.remove("show");
+      }, 6500);
+
+      showBreeders();
+    }
+
+    function showBreeders() {
+      let recordsList = document.getElementById("records-list");
+      recordsList.innerHTML = "";
+      breeders.forEach((breeder, index) => {
+        let recordDiv = document.createElement("div");
+        recordDiv.className = "record";
+        recordDiv.innerHTML = `
+          ${breeder.name} - الموعد الجاي: ${calculateRemainingDays(breeder.nextAppointment)} يوم
+          <button class="edit-btn" onclick="editBreeder(${index}); event.stopPropagation();">تعديل</button>
+          <button class="delete-btn" onclick="deleteBreeder(${index}); event.stopPropagation();">حذف</button>
+        `;
+        recordDiv.onclick = function() {
+          showBreederDetail(index);
+        };
+        recordsList.appendChild(recordDiv);
+      });
+    }
+
+    function showBreederDetail(index) {
+      let breeder = breeders[index];
+      document.getElementById("detailName").innerText = "اسم المربي: " + breeder.name;
+      document.getElementById("detailPhone").innerText = "رقم الجوال: " + breeder.phone;
+      document.getElementById("detailVaccine").innerText = "نوع التطعيم: " + breeder.vaccine;
+      document.getElementById("detailNextAppointment").innerText = "الموعد الجاي: " + calculateRemainingDays(breeder.nextAppointment) + " يوم";
+      let detailPrev = document.getElementById("detailPreviousAppointments");
+      detailPrev.innerHTML = "";
+      if(breeder.previousAppointments && breeder.previousAppointments.length > 0){
+        breeder.previousAppointments.forEach(app => {
+          let p = document.createElement("p");
+          p.innerText = app.date + " - " + app.vaccine;
+          detailPrev.appendChild(p);
+        });
+      } else {
+        detailPrev.innerText = "لايوجد";
+      }
+      showSection("breederDetail");
+    }
+
+    function deleteBreeder(index) {
+      if(confirm("هل أنت متأكد من حذف هذا السجل؟")){
+        breeders.splice(index, 1);
+        localStorage.setItem("breeders_" + localStorage.getItem("username"), JSON.stringify(breeders));
+        showBreeders();
+      }
+    }
+
+    function editBreeder(index) {
+      let breeder = breeders[index];
+      document.getElementById("breederName").value = breeder.name;
+      document.getElementById("breederPhone").value = breeder.phone;
+      document.getElementById("vaccineType").value = breeder.vaccine;
+      document.getElementById("vaccinationDate").value = breeder.vaccinationDate;
+      document.getElementById("nextAppointment").selectedIndex = 0;
+      breeders.splice(index, 1);
+      localStorage.setItem("breeders_" + localStorage.getItem("username"), JSON.stringify(breeders));
+      showSection('main');
+    }
+
+    function searchBreeders() {
+      let query = document.getElementById("search").value.toLowerCase();
+      let recordsList = document.getElementById("records-list");
+      recordsList.innerHTML = "";
+      breeders.forEach((breeder, index) => {
+        if (breeder.name.toLowerCase().includes(query) || breeder.vaccine.toLowerCase().includes(query)) {
+          let recordDiv = document.createElement("div");
+          recordDiv.className = "record";
+          recordDiv.innerHTML = `
+            ${breeder.name} - الموعد الجاي: ${calculateRemainingDays(breeder.nextAppointment)} يوم
+            <button class="edit-btn" onclick="editBreeder(${index}); event.stopPropagation();">تعديل</button>
+            <button class="delete-btn" onclick="deleteBreeder(${index}); event.stopPropagation();">حذف</button>
+          `;
+          recordDiv.onclick = function() {
+            showBreederDetail(index);
+          };
+          recordsList.appendChild(recordDiv);
+        }
+      });
+    }
+
+    function calculateRemainingDays(date) {
+      return Math.ceil((new Date(date) - new Date()) / (1000 * 60 * 60 * 24));
+    }
+
+    function showAdminPanel() {
+      let accountsList = document.getElementById("accounts-list");
+      accountsList.innerHTML = "";
+      for (let i = 0; i < localStorage.length; i++) {
+        let key = localStorage.key(i);
+        if(key.startsWith("account_")) {
+          let account = JSON.parse(localStorage.getItem(key));
+          if(account.banned) continue;
+          let div = document.createElement("div");
+          div.className = "record";
+          let innerHTML = `
+            ${account.username}
+            <button class="details-btn" onclick="toggleAccountDetails('${key}', this.parentElement)">عرض التفاصيل</button>
+          `;
+          if(account.username.toLowerCase() !== "admin"){
+            innerHTML += `<button class="delete-btn" onclick="banUser('${key}')">تبنيد المستخدم</button>`;
+          }
+          div.innerHTML = innerHTML;
+          accountsList.appendChild(div);
+        }
+      }
+    }
+
+    function toggleAccountDetails(key, div) {
+      let detailsDiv = document.getElementById(`account-details-${key}`);
+      if (detailsDiv) {
+        detailsDiv.remove();
+      } else {
+        let account = JSON.parse(localStorage.getItem(key));
+        let details = document.createElement("div");
+        details.id = `account-details-${key}`;
+        details.innerHTML = `
+          <p>البريد الإلكتروني: ${account.email}</p>
+          <p>كلمة المرور: ${account.password}</p>
+          <p>موعد إنشاء الحساب: ${account.createdAt}</p>
+          <button class="hide-btn" onclick="toggleAccountDetails('${key}', this.parentElement.parentElement)">إخفاء التفاصيل</button>
+        `;
+        div.appendChild(details);
+      }
+    }
+
+    function banUser(key) {
+      let account = JSON.parse(localStorage.getItem(key));
+      if (account.username.toLowerCase() === "admin") {
+        alert("لا يمكن تبنيد حساب المسؤول");
+        return;
+      }
+      let reason = prompt("أدخل سبب التبنيد:");
+      if (reason) {
+        account.banned = true;
+        account.banReason = reason;
+        localStorage.setItem(key, JSON.stringify(account));
+        alert("تم تبنيد المستخدم " + account.username);
+        showAdminPanel();
+      }
+    }
+
+    function logout() {
+      if (confirm("متاكد من تسجيل الخروج؟")) {
+        localStorage.removeItem("username");
+        showSection("login");
+        alert("تم تسجيل الخروج");
+      }
+    }
+
+    window.onload = function() {
+      if (localStorage.getItem("username")) {
+        updateWelcome();
+        let username = localStorage.getItem("username");
+        breeders = JSON.parse(localStorage.getItem("breeders_" + username)) || [];
+        showSection("main");
+      } else {
+        showSection("login");
+      }
+      showBreeders();
+    }
+  </script>
+
+  <p style="margin-top:30px; font-size:12px;">تم صنع الموقع بواسطة الدكتور علي بلال</p>
+</body>
+  </html>
