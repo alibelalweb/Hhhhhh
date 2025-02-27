@@ -1,59 +1,179 @@
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700&display=swap');
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Cairo', sans-serif;
-}
-
+/* Base styles */
 body {
-    background-color: #f4f4f4;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+  font-family: Arial, sans-serif;
+  background-color: #f0f4f8;
+  color: #333;
+  text-align: center;
+  margin: 0;
+  padding: 0;
 }
 
 .container {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    width: 350px;
-    text-align: center;
+  max-width: 600px;
+  margin: auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 30px;
 }
 
-h2 {
-    margin-bottom: 20px;
-    color: #333;
+.hidden {
+  display: none;
 }
 
-input {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+/* Menu button styles */
+.menu-btn {
+  background-color: #009688;
+  color: white;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  font-size: 16px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
 }
 
-button {
-    width: 100%;
-    padding: 10px;
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: 0.3s;
+.menu-btn:hover {
+  background-color: #00796b;
 }
 
-button:hover {
-    background-color: #0056b3;
+/* Menu styling - now positioned on the right */
+.menu {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  left: auto;
+  display: none;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 200px;
+  z-index: 1000;
 }
 
-.error {
-    color: red;
-    font-size: 14px;
-    margin-top: 10px;
+.menu.show {
+  display: block;
+}
+
+.menu .menu-btn {
+  display: block;
+  margin-bottom: 10px;
+}
+
+/* Record styles */
+.record {
+  background-color: #f9f9f9;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 8px;
+  cursor: pointer;
+  position: relative;
+  border: 1px solid #ddd;
+  transition: background-color 0.3s ease;
+}
+
+.record:hover {
+  background-color: #f1f1f1;
+}
+
+/* Buttons within records */
+.edit-btn,
+.delete-btn,
+.hide-btn,
+.details-btn {
+  background-color: #FFC107;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  cursor: pointer;
+  margin-left: 5px;
+  border-radius: 5px;
+}
+
+.delete-btn {
+  background-color: #E91E63;
+}
+
+.hide-btn {
+  background-color: #FF5722;
+}
+
+/* Input and select elements */
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="datetime-local"],
+input[type="date"],
+select {
+  padding: 10px;
+  width: 100%;
+  margin: 10px 0;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+/* Custom style for optional date input */
+.custom-date {
+  border: 2px solid #009688;
+  background-color: #e0f2f1;
+  color: #333;
+}
+
+/* Notification rectangle style */
+.notification {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 128, 0, 0.3);
+  padding: 15px 20px;
+  border: 2px solid #008000;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  z-index: 2000;
+  animation: shake 0.5s ease-in-out;
+}
+
+.notification .check-circle {
+  width: 30px;
+  height: 30px;
+  background-color: #008000;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 15px;
+  animation: tilt 1s infinite;
+}
+
+.notification .check-circle::before {
+  content: "✓";
+  color: white;
+  font-weight: bold;
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes tilt {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(5deg); }
+  50% { transform: rotate(0deg); }
+  75% { transform: rotate(-5deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@keyframes shake {
+  0% { transform: translateX(-50%) rotate(0deg); }
+  25% { transform: translateX(-50%) rotate(3deg); }
+  50% { transform: translateX(-50%) rotate(0deg); }
+  75% { transform: translateX(-50%) rotate(-3deg); }
+  100% { transform: translateX(-50%) rotate(0deg); }
 }
