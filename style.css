@@ -32,14 +32,15 @@ body {
   width: 100%;
   font-size: 16px;
   border-radius: 5px;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 .menu-btn:hover {
   background-color: #00796b;
+  transform: scale(1.02);
 }
 
-/* Menu styling - now positioned on the right */
+/* Menu styling - positioned on the right with slide animation */
 .menu {
   position: absolute;
   top: 10px;
@@ -56,6 +57,7 @@ body {
 
 .menu.show {
   display: block;
+  animation: slideIn 0.5s forwards;
 }
 
 .menu .menu-btn {
@@ -123,57 +125,4 @@ select {
   color: #333;
 }
 
-/* Notification rectangle style */
-.notification {
-  position: fixed;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: rgba(0, 128, 0, 0.3);
-  padding: 15px 20px;
-  border: 2px solid #008000;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  z-index: 2000;
-  animation: shake 0.5s ease-in-out;
-}
-
-.notification .check-circle {
-  width: 30px;
-  height: 30px;
-  background-color: #008000;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: 15px;
-  animation: tilt 1s infinite;
-}
-
-.notification .check-circle::before {
-  content: "✓";
-  color: white;
-  font-weight: bold;
-}
-
-@keyframes fadeOut {
-  from { opacity: 1; }
-  to { opacity: 0; }
-}
-
-@keyframes tilt {
-  0% { transform: rotate(0deg); }
-  25% { transform: rotate(5deg); }
-  50% { transform: rotate(0deg); }
-  75% { transform: rotate(-5deg); }
-  100% { transform: rotate(0deg); }
-}
-
-@keyframes shake {
-  0% { transform: translateX(-50%) rotate(0deg); }
-  25% { transform: translateX(-50%) rotate(3deg); }
-  50% { transform: translateX(-50%) rotate(0deg); }
-  75% { transform: translateX(-50%) rotate(-3deg); }
-  100% { transform: translateX(-50%) rotate(0deg); }
-}
+/* (تكرار لبعض الأنماط الخاصة بالإشعارات موجودة في index.html) */
