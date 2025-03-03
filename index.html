@@ -37,9 +37,11 @@
       width: 100%;
       font-size: 16px;
       border-radius: 5px;
+      transition: background-color 0.3s ease, transform 0.3s ease;
     }
     .menu-btn:hover {
       background-color: #00796b;
+      transform: scale(1.02);
     }
     /* قائمة التنقل */
     .menu {
@@ -57,6 +59,7 @@
     }
     .menu.show {
       display: block;
+      animation: slideIn 0.5s forwards;
     }
     .menu .menu-btn {
       display: block;
@@ -111,6 +114,95 @@
       border: 2px solid #009688;
       background-color: #e0f2f1;
       color: #333;
+    }
+    /* تأثير إسقاط كلمة الترحيب */
+    #welcome {
+      animation: dropDown 1.5s ease-out;
+    }
+    @keyframes dropDown {
+      from { transform: translateY(-50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    /* تنسيق المستطيل الخاص بالإشعارات */
+    .notification {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 15px 20px;
+      border: 2px solid;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      z-index: 2000;
+      animation: shake 0.5s ease-in-out;
+      min-width: 300px;
+    }
+    .notification.success {
+      background-color: rgba(0, 128, 0, 0.3);
+      border-color: #008000;
+    }
+    .notification.error {
+      background-color: rgba(255, 0, 0, 0.3);
+      border-color: #FF0000;
+    }
+    /* الدائرة داخل الإشعار */
+    .notification .circle {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+    .notification.success .circle {
+      background-color: #008000;
+      margin-left: 15px;
+    }
+    .notification.error .circle {
+      background-color: #FF0000;
+      margin-right: 15px;
+    }
+    /* الخط الذي يوضح مدة بقاء الإشعار */
+    .notification .progress {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 4px;
+      background-color: currentColor;
+      width: 100%;
+      animation: progressShrink 3s linear forwards;
+      border-bottom-left-radius: 6px;
+      border-bottom-right-radius: 6px;
+    }
+    @keyframes progressShrink {
+      from { width: 100%; }
+      to { width: 0; }
+    }
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+    @keyframes tilt {
+      0% { transform: rotate(0deg); }
+      25% { transform: rotate(5deg); }
+      50% { transform: rotate(0deg); }
+      75% { transform: rotate(-5deg); }
+      100% { transform: rotate(0deg); }
+    }
+    @keyframes shake {
+      0% { transform: translateX(-50%) rotate(0deg); }
+      25% { transform: translateX(-50%) rotate(3deg); }
+      50% { transform: translateX(-50%) rotate(0deg); }
+      75% { transform: translateX(-50%) rotate(-3deg); }
+      100% { transform: translateX(-50%) rotate(0deg); }
     }
   </style>
 </head>
@@ -266,16 +358,16 @@
       sections.forEach(s => {
         document.getElementById(s).classList.add("hidden");
       });
-      if(section === "adminPanel" && localStorage.getItem("username")?.toLowerCase() !== "ownership"){
+      if (section === "adminPanel" && localStorage.getItem("username")?.toLowerCase() !== "ownership") {
         alert("غير مصرح");
         return;
       }
       document.getElementById(section).classList.remove("hidden");
       document.getElementById("menu").classList.remove("show");
-      if(section === "breeders"){
+      if (section === "breeders") {
         showBreeders();
       }
-      if(section === "adminPanel"){
+      if (section === "adminPanel") {
         showAdminPanel();
       }
     }
@@ -283,7 +375,7 @@
     function updateWelcome() {
       let username = localStorage.getItem("username");
       document.getElementById("welcome").innerText = "أهلا بك يا " + username;
-      if(username.toLowerCase() === "ownership"){
+      if (username.toLowerCase() === "ownership") {
         document.getElementById("adminPanelBtn").classList.remove("hidden");
       } else {
         document.getElementById("adminPanelBtn").classList.add("hidden");
@@ -294,18 +386,18 @@
       let username = document.getElementById("loginUsername").value;
       let password = document.getElementById("loginPassword").value;
       let accountData;
-      if(username.toLowerCase() === "admin"){
+      if (username.toLowerCase() === "admin") {
         accountData = localStorage.getItem("account_admin");
       } else {
         accountData = localStorage.getItem("account_" + username);
       }
       if (accountData) {
-        if(username.toLowerCase() === "ownership"){
+        if (username.toLowerCase() === "ownership") {
           accountData = atob(accountData);
         }
         let account = JSON.parse(accountData);
         if (username === account.username && password === account.password) {
-          if(account.banned){
+          if (account.banned) {
             alert("تم تبنديك بواسطة المالك السبب: " + account.banReason);
             return;
           }
@@ -326,8 +418,8 @@
       let email = document.getElementById("registerEmail").value;
       let password = document.getElementById("registerPassword").value;
       let confirmPassword = document.getElementById("registerConfirmPassword").value;
-      
-      if(username.toLowerCase() === "admin"){
+        
+      if (username.toLowerCase() === "admin") {
         alert("اسم المستخدم admin محجوز");
         return;
       }
@@ -339,9 +431,9 @@
         alert("كلمة المرور وتأكيدها غير متطابقين");
         return;
       }
-      if(username.toLowerCase() === "ownership"){
+      if (username.toLowerCase() === "ownership") {
         let count = localStorage.getItem("ownershipCount") || 0;
-        if(parseInt(count) >= 2){
+        if (parseInt(count) >= 2) {
           alert("لا يمكنك إنشاء حساب بالاسم ownership لأكثر من شخصين");
           return;
         } else {
@@ -352,13 +444,13 @@
         alert("اسم المستخدم موجود بالفعل");
         return;
       }
-      let account = { 
-        username, 
-        email, 
-        password, 
+      let account = {   
+        username,   
+        email,   
+        password,   
         createdAt: new Date().toISOString()
       };
-      if(username.toLowerCase() === "ownership"){
+      if (username.toLowerCase() === "ownership") {
         let encryptedAccount = btoa(JSON.stringify(account));
         localStorage.setItem("account_" + username, encryptedAccount);
       } else {
@@ -375,7 +467,7 @@
       let email = document.getElementById("resetEmail").value;
       let newPassword = document.getElementById("resetNewPassword").value;
       let confirmPassword = document.getElementById("resetConfirmPassword").value;
-      
+        
       if (newPassword !== confirmPassword) {
         alert("كلمة المرور وتأكيدها غير متطابقين");
         return;
@@ -385,16 +477,16 @@
         alert("الحساب غير موجود");
         return;
       }
-      if(username.toLowerCase() === "ownership"){
+      if (username.toLowerCase() === "ownership") {
         accountData = atob(accountData);
       }
       let account = JSON.parse(accountData);
-      if(account.email !== email){
+      if (account.email !== email) {
         alert("الايميل او اسم المستخدم غير صالح");
         return;
       }
       account.password = newPassword;
-      if(username.toLowerCase() === "ownership"){
+      if (username.toLowerCase() === "ownership") {
         localStorage.setItem("account_" + username, btoa(JSON.stringify(account)));
       } else {
         localStorage.setItem("account_" + username, JSON.stringify(account));
@@ -406,7 +498,7 @@
     function handleNextAppointmentChange() {
       let select = document.getElementById("nextAppointment");
       let optionalDiv = document.getElementById("optionalDateDiv");
-      if(select.value === "optional"){
+      if (select.value === "optional") {
         optionalDiv.classList.remove("hidden");
       } else {
         optionalDiv.classList.add("hidden");
@@ -422,7 +514,7 @@
       dateInput.type = "date";
       dateInput.placeholder = "اختر تاريخ الموعد";
       dateInput.onchange = function() {
-        if(!this.nextElementSibling){
+        if (!this.nextElementSibling) {
           const vaccineSelect = document.createElement("select");
           vaccineSelect.innerHTML = `
             <option value="معوي">معوي</option>
@@ -440,23 +532,43 @@
       container.appendChild(div);
     }
 
-    // دالة إنشاء مستطيل الإرسال مع الدائرة وإشارة الصح وتأثيرات الاهتزاز والاختفاء التدريجي
-    function showNotification(msg) {
+    // دالة إنشاء مستطيل الإرسال مع الدائرة وإشارة الصح أو علامة X وتأثير شريط التقدم والاختفاء التدريجي
+    function showNotification(msg, type = "success") {
       let notification = document.createElement("div");
-      notification.className = "notification";
-      let textSpan = document.createElement("span");
-      textSpan.innerText = msg;
-      notification.appendChild(textSpan);
-      let circle = document.createElement("div");
-      circle.className = "check-circle";
-      notification.appendChild(circle);
+      notification.className = "notification " + type;
+      
+      // حسب النوع، ضع الدائرة على اليمين (للنجاح) أو على اليسار (للخطأ)
+      if (type === "success") {
+        let textSpan = document.createElement("span");
+        textSpan.innerText = msg;
+        notification.appendChild(textSpan);
+        let circle = document.createElement("div");
+        circle.className = "circle";
+        circle.innerText = "✓";
+        notification.appendChild(circle);
+      } else if (type === "error") {
+        let circle = document.createElement("div");
+        circle.className = "circle";
+        circle.innerText = "×";
+        notification.appendChild(circle);
+        let textSpan = document.createElement("span");
+        textSpan.innerText = msg;
+        notification.appendChild(textSpan);
+      }
+      
+      // إضافة شريط التقدم
+      let progress = document.createElement("div");
+      progress.className = "progress";
+      notification.appendChild(progress);
+      
       document.body.appendChild(notification);
       
+      // بدء عملية الاختفاء التدريجي بعد 3 ثواني
       setTimeout(() => {
-         notification.style.animation = "fadeOut 2s forwards";
-         setTimeout(() => {
-             notification.remove();
-         }, 2000);
+        notification.style.animation = "fadeOut 2s forwards";
+        setTimeout(() => {
+          notification.remove();
+        }, 2000);
       }, 3000);
     }
 
@@ -467,22 +579,24 @@
       let vaccinationDate = document.getElementById("vaccinationDate").value;
       let nextAppointmentSelect = document.getElementById("nextAppointment").value;
       let nextAppointment;
-      if(!name || !phone || !vaccinationDate){
-        alert("يرجى تعبئة جميع الحقول الأساسية");
+      
+      if (!name || !phone || !vaccinationDate) {
+        showNotification("يرجى تعبئة الحقول كاملة!", "error");
         return;
       }
+      
       let vacDate = new Date(vaccinationDate);
-      if(nextAppointmentSelect === "optional"){
+      if (nextAppointmentSelect === "optional") {
         let optionalDate = document.getElementById("optionalNextAppointment").value;
-        if(!optionalDate){
-          alert("يرجى اختيار التاريخ من الخانة الاختيارية");
+        if (!optionalDate) {
+          showNotification("يرجى تعبئة الحقول كاملة!", "error");
           return;
         }
         nextAppointment = new Date(optionalDate);
       } else {
         nextAppointment = new Date(vacDate.getTime() + parseInt(nextAppointmentSelect) * 24 * 60 * 60 * 1000);
       }
-      
+        
       let prevContainer = document.getElementById("previousAppointmentsContainer");
       let prevNodes = prevContainer.querySelectorAll(".prev-app");
       let prevApps = [];
@@ -490,7 +604,7 @@
         let dateVal = div.querySelector("input[type='date']").value;
         let vaccineSelect = div.querySelector("select");
         let vaccineVal = vaccineSelect ? vaccineSelect.value : "";
-        if(dateVal){
+        if (dateVal) {
           prevApps.push({ date: dateVal, vaccine: vaccineVal });
         }
       });
@@ -498,7 +612,7 @@
       breeders.push({ name, phone, vaccine, vaccinationDate, nextAppointment, previousAppointments: prevApps });
       localStorage.setItem("breeders_" + localStorage.getItem("username"), JSON.stringify(breeders));
 
-      showNotification("تم الإرسال");
+      showNotification("تم الإرسال بنجاح!", "success");
 
       document.getElementById("breederName").value = "";
       document.getElementById("breederPhone").value = "";
@@ -538,7 +652,7 @@
       document.getElementById("detailNextAppointment").innerText = "الموعد الجاي: " + calculateRemainingDays(breeder.nextAppointment) + " يوم";
       let detailPrev = document.getElementById("detailPreviousAppointments");
       detailPrev.innerHTML = "";
-      if(breeder.previousAppointments && breeder.previousAppointments.length > 0){
+      if (breeder.previousAppointments && breeder.previousAppointments.length > 0) {
         breeder.previousAppointments.forEach(app => {
           let p = document.createElement("p");
           p.innerText = app.date + " - " + app.vaccine;
@@ -551,7 +665,7 @@
     }
 
     function deleteBreeder(index) {
-      if(confirm("هل أنت متأكد من حذف هذا السجل؟")){
+      if (confirm("هل أنت متأكد من حذف هذا السجل؟")) {
         breeders.splice(index, 1);
         localStorage.setItem("breeders_" + localStorage.getItem("username"), JSON.stringify(breeders));
         showBreeders();
@@ -600,22 +714,22 @@
       accountsList.innerHTML = "";
       for (let i = 0; i < localStorage.length; i++) {
         let key = localStorage.key(i);
-        if(key.startsWith("account_")) {
+        if (key.startsWith("account_")) {
           let accountRaw = localStorage.getItem(key);
           let account;
-          if(key === "account_ownership"){
+          if (key === "account_ownership") {
             account = JSON.parse(atob(accountRaw));
           } else {
             account = JSON.parse(accountRaw);
           }
-          if(account.banned) continue;
+          if (account.banned) continue;
           let div = document.createElement("div");
           div.className = "record";
           let innerHTML = `
             ${account.username}
             <button class="details-btn" onclick="toggleAccountDetails('${key}', this.parentElement)">عرض التفاصيل</button>
           `;
-          if(account.username.toLowerCase() !== "admin"){
+          if (account.username.toLowerCase() !== "admin") {
             innerHTML += `<button class="delete-btn" onclick="banUser('${key}')">تبنيد المستخدم</button>`;
           }
           div.innerHTML = innerHTML;
@@ -631,7 +745,7 @@
       } else {
         let accountRaw = localStorage.getItem(key);
         let account;
-        if(key === "account_ownership"){
+        if (key === "account_ownership") {
             account = JSON.parse(atob(accountRaw));
         } else {
             account = JSON.parse(accountRaw);
@@ -651,7 +765,7 @@
     function banUser(key) {
       let accountRaw = localStorage.getItem(key);
       let account;
-      if(key === "account_ownership"){
+      if (key === "account_ownership") {
          account = JSON.parse(atob(accountRaw));
       } else {
          account = JSON.parse(accountRaw);
@@ -664,7 +778,7 @@
       if (reason) {
         account.banned = true;
         account.banReason = reason;
-        if(account.username.toLowerCase() === "ownership"){
+        if (account.username.toLowerCase() === "ownership") {
           localStorage.setItem(key, btoa(JSON.stringify(account)));
         } else {
           localStorage.setItem(key, JSON.stringify(account));
