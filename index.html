@@ -6,7 +6,7 @@
   <title>سجل المربين</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    /* بعض التنسيقات الأساسية إن رغبت بإبقائها هنا */
+    /* التنسيقات الأساسية */
     body {
       font-family: Arial, sans-serif;
       background-color: #f0f4f8;
@@ -23,6 +23,7 @@
       border-radius: 10px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       margin-top: 30px;
+      position: relative;
     }
     .hidden {
       display: none;
@@ -74,9 +75,28 @@
       position: relative;
       border: 1px solid #ddd;
       transition: background-color 0.3s ease;
+      opacity: 0;
+      animation: fadeInUp 0.5s forwards;
     }
     .record:hover {
       background-color: #f1f1f1;
+    }
+    .record .toggle-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      left: 0; /* في البداية تكون على اليسار */
+      padding: 5px 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background-color: silver;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+    .record .toggle-btn.right {
+      left: auto;
+      right: 0;
+      background-color: green;
     }
     .edit-btn,
     .delete-btn,
@@ -109,7 +129,7 @@
       border: 1px solid #ccc;
       box-sizing: border-box;
     }
-    /* تنسيق مخصص لحقل اختيار التاريخ الخاص بالموعد الاختياري */
+    /* تنسيق حقل التاريخ الاختياري */
     .custom-date {
       border: 2px solid #009688;
       background-color: #e0f2f1;
@@ -127,7 +147,11 @@
       from { transform: translateX(100%); opacity: 0; }
       to { transform: translateX(0); opacity: 1; }
     }
-    /* تنسيق المستطيل الخاص بالإشعارات */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    /* تنسيق الإشعارات لتكون الأيقونة في أقصى اليمين */
     .notification {
       position: fixed;
       top: 20px;
@@ -137,6 +161,7 @@
       border: 2px solid;
       border-radius: 8px;
       display: flex;
+      justify-content: space-between;
       align-items: center;
       z-index: 2000;
       animation: shake 0.5s ease-in-out;
@@ -150,7 +175,6 @@
       background-color: rgba(255, 0, 0, 0.3);
       border-color: #FF0000;
     }
-    /* الدائرة داخل الإشعار */
     .notification .circle {
       width: 30px;
       height: 30px;
@@ -164,13 +188,10 @@
     }
     .notification.success .circle {
       background-color: #008000;
-      margin-left: 15px;
     }
     .notification.error .circle {
       background-color: #FF0000;
-      margin-right: 15px;
     }
-    /* الخط الذي يوضح مدة بقاء الإشعار */
     .notification .progress {
       position: absolute;
       bottom: 0;
@@ -190,13 +211,6 @@
       from { opacity: 1; }
       to { opacity: 0; }
     }
-    @keyframes tilt {
-      0% { transform: rotate(0deg); }
-      25% { transform: rotate(5deg); }
-      50% { transform: rotate(0deg); }
-      75% { transform: rotate(-5deg); }
-      100% { transform: rotate(0deg); }
-    }
     @keyframes shake {
       0% { transform: translateX(-50%) rotate(0deg); }
       25% { transform: translateX(-50%) rotate(3deg); }
@@ -204,21 +218,66 @@
       75% { transform: translateX(-50%) rotate(-3deg); }
       100% { transform: translateX(-50%) rotate(0deg); }
     }
+    /* نافذة التنبيه عند عدم حفظ النموذج */
+    .unsaved-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #FFF9C4;
+      border: 2px solid #FBC02D;
+      border-radius: 8px;
+      padding: 20px;
+      z-index: 3000;
+      text-align: center;
+    }
+    .unsaved-modal .warning {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .unsaved-modal .warning .text {
+      flex: 1;
+      text-align: center;
+      font-weight: bold;
+    }
+    .unsaved-modal .warning .icon {
+      font-size: 24px;
+      color: #FBC02D;
+    }
+    .unsaved-modal button {
+      background-color: green;
+      color: white;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
 
   <!-- زر القائمة -->
-  <button class="menu-btn" onclick="toggleMenu()">☰ القائمة</button>
+  <button class="menu-btn" onclick="handleNavigation('menu')">☰ القائمة</button>
 
   <!-- القائمة الجانبية -->
   <div id="menu" class="menu">
-    <button class="menu-btn" onclick="showSection('main')">القائمة الرئيسية</button>
-    <button class="menu-btn" onclick="showSection('breeders')">سجل المربين</button>
-    <button class="menu-btn" onclick="showSection('resetPassword')">إعادة تعيين كلمة المرور</button>
+    <button class="menu-btn" onclick="handleNavigation('main')">القائمة الرئيسية</button>
+    <button class="menu-btn" onclick="handleNavigation('breeders')">سجل المربين</button>
+    <button class="menu-btn" onclick="handleNavigation('resetPassword')">إعادة تعيين كلمة المرور</button>
     <!-- زر لوحة التحكم الإدارية يظهر فقط للحساب ownership -->
-    <button id="adminPanelBtn" class="menu-btn hidden" onclick="showSection('adminPanel')">لوحة التحكم الإدارية</button>
+    <button id="adminPanelBtn" class="menu-btn hidden" onclick="handleNavigation('adminPanel')">لوحة التحكم الإدارية</button>
     <button class="menu-btn" onclick="logout()">تسجيل خروج</button>
+  </div>
+
+  <!-- نافذة التنبيه عند عدم حفظ النموذج -->
+  <div id="unsavedModal" class="unsaved-modal hidden">
+    <div class="warning">
+      <span class="text">يرجى ارسال النموذج</span>
+      <span class="icon">⚠️</span>
+    </div>
+    <button onclick="proceedToSection()">عدم الحفظ</button>
   </div>
 
   <!-- صفحة تسجيل الدخول -->
@@ -272,6 +331,8 @@
     <h2 id="welcome">أهلا بك</h2>
     <input type="text" id="breederName" placeholder="اسم المربي">
     <input type="text" id="breederPhone" placeholder="رقم جوال المربي">
+    <!-- حقل الموقع المضاف -->
+    <input type="text" id="breederLocation" placeholder="الموقع">
     <select id="vaccineType">
       <option value="معوي">معوي</option>
       <option value="دموي">دموي</option>
@@ -320,6 +381,7 @@
     <h2>تفاصيل المربي</h2>
     <p id="detailName"></p>
     <p id="detailPhone"></p>
+    <p id="detailLocation"></p>
     <p id="detailVaccine"></p>
     <p id="detailNextAppointment"></p>
     <h3>المواعيد السابقة:</h3>
@@ -337,6 +399,7 @@
   <script>
     let breeders = [];
     let previousAppointments = [];
+    let pendingSection = ""; // لتخزين القسم المطلوب التنقل إليه عند وجود بيانات غير محفوظة
 
     if (!localStorage.getItem("account_admin")) {
       let adminAccount = {
@@ -348,9 +411,45 @@
       localStorage.setItem("account_admin", JSON.stringify(adminAccount));
     }
 
-    function toggleMenu() {
-      let menu = document.getElementById("menu");
-      menu.classList.toggle("show");
+    function handleNavigation(target) {
+      // إذا كان المستخدم يحاول التنقل من صفحة main والحقول غير فارغة، نعرض نافذة التنبيه
+      if (!document.getElementById("main").classList.contains("hidden")) {
+        if (hasUnsavedData()) {
+          pendingSection = target;
+          showUnsavedModal();
+          return;
+        }
+      }
+      showSection(target);
+    }
+
+    function hasUnsavedData() {
+      // التحقق من وجود بيانات في حقول النموذج الرئيسية
+      return document.getElementById("breederName").value ||
+             document.getElementById("breederPhone").value ||
+             document.getElementById("breederLocation").value ||
+             document.getElementById("vaccinationDate").value ||
+             document.getElementById("optionalNextAppointment").value;
+    }
+
+    function showUnsavedModal() {
+      document.getElementById("unsavedModal").classList.remove("hidden");
+    }
+
+    function proceedToSection() {
+      document.getElementById("unsavedModal").classList.add("hidden");
+      clearMainForm();
+      showSection(pendingSection);
+      pendingSection = "";
+    }
+
+    function clearMainForm() {
+      document.getElementById("breederName").value = "";
+      document.getElementById("breederPhone").value = "";
+      document.getElementById("breederLocation").value = "";
+      document.getElementById("vaccinationDate").value = "";
+      document.getElementById("optionalNextAppointment").value = "";
+      document.getElementById("previousAppointmentsContainer").innerHTML = "";
     }
 
     function showSection(section) {
@@ -532,38 +631,27 @@
       container.appendChild(div);
     }
 
-    // دالة إنشاء مستطيل الإرسال مع الدائرة وإشارة الصح أو علامة X وتأثير شريط التقدم والاختفاء التدريجي
+    // دالة عرض الإشعارات مع أيقونة في أقصى اليمين
     function showNotification(msg, type = "success") {
       let notification = document.createElement("div");
       notification.className = "notification " + type;
       
-      // حسب النوع، ضع الدائرة على اليمين (للنجاح) أو على اليسار (للخطأ)
-      if (type === "success") {
-        let textSpan = document.createElement("span");
-        textSpan.innerText = msg;
-        notification.appendChild(textSpan);
-        let circle = document.createElement("div");
-        circle.className = "circle";
-        circle.innerText = "✓";
-        notification.appendChild(circle);
-      } else if (type === "error") {
-        let circle = document.createElement("div");
-        circle.className = "circle";
-        circle.innerText = "×";
-        notification.appendChild(circle);
-        let textSpan = document.createElement("span");
-        textSpan.innerText = msg;
-        notification.appendChild(textSpan);
-      }
+      let textSpan = document.createElement("span");
+      textSpan.innerText = msg;
+      notification.appendChild(textSpan);
       
-      // إضافة شريط التقدم
+      let circle = document.createElement("div");
+      circle.className = "circle";
+      // استخدم رمز ✓ للنجاح ورمز ! للتنبيه أو الخطأ
+      circle.innerText = type === "success" ? "✓" : "!";
+      notification.appendChild(circle);
+      
       let progress = document.createElement("div");
       progress.className = "progress";
       notification.appendChild(progress);
       
       document.body.appendChild(notification);
       
-      // بدء عملية الاختفاء التدريجي بعد 3 ثواني
       setTimeout(() => {
         notification.style.animation = "fadeOut 2s forwards";
         setTimeout(() => {
@@ -572,9 +660,19 @@
       }, 3000);
     }
 
+    // دالة لحساب الوقت المتبقي بالايام والساعات مع عرض القيمة بالسالب إذا انتهى الموعد
+    function calculateRemainingTime(date) {
+      let diff = new Date(date) - new Date();
+      let days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      let hours = Math.floor((Math.abs(diff) % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      return `${days} أيام و ${hours} ساعة`;
+    }
+
+    // عند الضغط على زر الإرسال، يتم حفظ بيانات المربي
     function addBreeder() {
       let name = document.getElementById("breederName").value;
       let phone = document.getElementById("breederPhone").value;
+      let location = document.getElementById("breederLocation").value;
       let vaccine = document.getElementById("vaccineType").value;
       let vaccinationDate = document.getElementById("vaccinationDate").value;
       let nextAppointmentSelect = document.getElementById("nextAppointment").value;
@@ -608,21 +706,16 @@
           prevApps.push({ date: dateVal, vaccine: vaccineVal });
         }
       });
-
-      breeders.push({ name, phone, vaccine, vaccinationDate, nextAppointment, previousAppointments: prevApps });
+      // إذا انتهى موعد الجاي (أي في الماضي) تتم إضافته تلقائيًا كموعد سابق
+      if(new Date(nextAppointment) < new Date()){
+        prevApps.push({ date: nextAppointment.toISOString().split("T")[0], vaccine });
+      }
+      
+      breeders.push({ name, phone, location, vaccine, vaccinationDate, nextAppointment, previousAppointments: prevApps });
       localStorage.setItem("breeders_" + localStorage.getItem("username"), JSON.stringify(breeders));
 
       showNotification("تم الإرسال بنجاح!", "success");
-
-      document.getElementById("breederName").value = "";
-      document.getElementById("breederPhone").value = "";
-      document.getElementById("vaccinationDate").value = "";
-      document.getElementById("vaccineType").selectedIndex = 0;
-      document.getElementById("nextAppointment").selectedIndex = 0;
-      document.getElementById("optionalDateDiv").classList.add("hidden");
-      document.getElementById("optionalNextAppointment").value = "";
-      document.getElementById("previousAppointmentsContainer").innerHTML = "";
-
+      clearMainForm();
       showBreeders();
     }
 
@@ -632,8 +725,10 @@
       breeders.forEach((breeder, index) => {
         let recordDiv = document.createElement("div");
         recordDiv.className = "record";
+        // إضافة تأخير تدريجي لكل سجل
+        recordDiv.style.animationDelay = (index * 0.2) + "s";
         recordDiv.innerHTML = `
-          ${breeder.name} - الموعد الجاي: ${calculateRemainingDays(breeder.nextAppointment)} يوم
+          ${breeder.name} - الموعد الجاي: ${calculateRemainingTime(breeder.nextAppointment)}
           <button class="edit-btn" onclick="editBreeder(${index}); event.stopPropagation();">تعديل</button>
           <button class="delete-btn" onclick="deleteBreeder(${index}); event.stopPropagation();">حذف</button>
         `;
@@ -648,15 +743,37 @@
       let breeder = breeders[index];
       document.getElementById("detailName").innerText = "اسم المربي: " + breeder.name;
       document.getElementById("detailPhone").innerText = "رقم الجوال: " + breeder.phone;
+      document.getElementById("detailLocation").innerText = "الموقع: " + (breeder.location || "غير محدد");
       document.getElementById("detailVaccine").innerText = "نوع التطعيم: " + breeder.vaccine;
-      document.getElementById("detailNextAppointment").innerText = "الموعد الجاي: " + calculateRemainingDays(breeder.nextAppointment) + " يوم";
+      document.getElementById("detailNextAppointment").innerText = "الموعد الجاي: " + calculateRemainingTime(breeder.nextAppointment);
       let detailPrev = document.getElementById("detailPreviousAppointments");
       detailPrev.innerHTML = "";
       if (breeder.previousAppointments && breeder.previousAppointments.length > 0) {
         breeder.previousAppointments.forEach(app => {
+          let div = document.createElement("div");
+          div.style.position = "relative";
+          div.style.padding = "5px 0";
           let p = document.createElement("p");
           p.innerText = app.date + " - " + app.vaccine;
-          detailPrev.appendChild(p);
+          p.style.display = "inline-block";
+          p.style.margin = "0";
+          div.appendChild(p);
+          // زر لتبديل حالة الموعد (يسار = افتراضي، يمين = مفعل)
+          let toggleBtn = document.createElement("button");
+          toggleBtn.className = "toggle-btn left";
+          toggleBtn.innerText = "⇆";
+          toggleBtn.onclick = function(e) {
+            e.stopPropagation();
+            if (toggleBtn.classList.contains("left")) {
+              toggleBtn.classList.remove("left");
+              toggleBtn.classList.add("right");
+            } else {
+              toggleBtn.classList.remove("right");
+              toggleBtn.classList.add("left");
+            }
+          };
+          div.appendChild(toggleBtn);
+          detailPrev.appendChild(div);
         });
       } else {
         detailPrev.innerText = "لايوجد";
@@ -676,6 +793,7 @@
       let breeder = breeders[index];
       document.getElementById("breederName").value = breeder.name;
       document.getElementById("breederPhone").value = breeder.phone;
+      document.getElementById("breederLocation").value = breeder.location || "";
       document.getElementById("vaccineType").value = breeder.vaccine;
       document.getElementById("vaccinationDate").value = breeder.vaccinationDate;
       document.getElementById("nextAppointment").selectedIndex = 0;
@@ -692,8 +810,9 @@
         if (breeder.name.toLowerCase().includes(query) || breeder.vaccine.toLowerCase().includes(query)) {
           let recordDiv = document.createElement("div");
           recordDiv.className = "record";
+          recordDiv.style.animationDelay = (index * 0.2) + "s";
           recordDiv.innerHTML = `
-            ${breeder.name} - الموعد الجاي: ${calculateRemainingDays(breeder.nextAppointment)} يوم
+            ${breeder.name} - الموعد الجاي: ${calculateRemainingTime(breeder.nextAppointment)}
             <button class="edit-btn" onclick="editBreeder(${index}); event.stopPropagation();">تعديل</button>
             <button class="delete-btn" onclick="deleteBreeder(${index}); event.stopPropagation();">حذف</button>
           `;
@@ -703,10 +822,6 @@
           recordsList.appendChild(recordDiv);
         }
       });
-    }
-
-    function calculateRemainingDays(date) {
-      return Math.ceil((new Date(date) - new Date()) / (1000 * 60 * 60 * 24));
     }
 
     function showAdminPanel() {
