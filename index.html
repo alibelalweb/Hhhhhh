@@ -114,6 +114,7 @@
       to { transform: translateX(0); opacity: 1; }
     }
     /* تنسيق الإشعارات */
+    
     .notification {
       position: fixed;
       top: 20px;
@@ -127,10 +128,13 @@
       z-index: 2000;
       animation: shake 0.5s ease-in-out;
       min-width: 300px;
+      justify-content: space-between;
     }
+    
     .notification.success {
-      background-color: rgba(0,128,0,0.3);
+      background-color: #008000;
       border-color: #008000;
+      color: white;
     }
     .notification.error {
       background-color: rgba(255,0,0,0.3);
@@ -244,7 +248,7 @@
     <h2 id="welcome">أهلا بك</h2>
     <!-- الحقول الأساسية -->
     <input type="text" id="breederName" placeholder="اسم المربي">
-    <input type="text" id="breederPhone" placeholder="رقم جوال المربي">
+    <input type="text" id="breederPhone" placeholder="رقم جوال المربي" oninput="validatePhoneNumber(this)">
     <input type="text" id="breederLocation" placeholder="الموقع">
     <!-- اختيار نوع العمل الميداني -->
     <select id="fieldWorkType" onchange="handleFieldWorkChange()">
@@ -272,7 +276,13 @@
       <input type="datetime-local" id="vaccination_date">
       <br>
       <label>الموعد القادم:</label>
-      <input type="datetime-local" id="vaccination_nextAppointment">
+      <select id="vaccination_nextAppointment" onchange="handleNextAppointmentChange(this)">
+        <option value="">اختر الموعد القادم</option>
+        <option value="14">أسبوعين</option>
+        <option value="21">ثلاثة أسابيع</option>
+        <option value="custom">اختياري</option>
+      </select>
+      <input type="date" id="vaccination_customNextAppointment" class="hidden">
     </div>
     
     <!-- قسم تشخيص -->
@@ -284,7 +294,13 @@
       <input type="datetime-local" id="diagnosis_date">
       <br>
       <label>الموعد القادم:</label>
-      <input type="datetime-local" id="diagnosis_nextAppointment">
+      <select id="diagnosis_nextAppointment" onchange="handleNextAppointmentChange(this)">
+        <option value="">اختر الموعد القادم</option>
+        <option value="14">أسبوعين</option>
+        <option value="21">ثلاثة أسابيع</option>
+        <option value="custom">اختياري</option>
+      </select>
+      <input type="date" id="diagnosis_customNextAppointment" class="hidden">
     </div>
     
     <!-- قسم ولادة -->
@@ -309,7 +325,13 @@
       <input type="text" id="delivery_treatment" placeholder="العلاج">
       <br>
       <label>الموعد القادم:</label>
-      <input type="datetime-local" id="delivery_nextAppointment">
+      <select id="delivery_nextAppointment" onchange="handleNextAppointmentChange(this)">
+        <option value="">اختر الموعد القادم</option>
+        <option value="14">أسبوعين</option>
+        <option value="21">ثلاثة أسابيع</option>
+        <option value="custom">اختياري</option>
+      </select>
+      <input type="date" id="delivery_customNextAppointment" class="hidden">
     </div>
     
     <!-- قسم جراحة -->
@@ -321,7 +343,13 @@
       <input type="datetime-local" id="surgery_date">
       <br>
       <label>الموعد القادم:</label>
-      <input type="datetime-local" id="surgery_nextAppointment">
+      <select id="surgery_nextAppointment" onchange="handleNextAppointmentChange(this)">
+        <option value="">اختر الموعد القادم</option>
+        <option value="14">أسبوعين</option>
+        <option value="21">ثلاثة أسابيع</option>
+        <option value="custom">اختياري</option>
+      </select>
+      <input type="date" id="surgery_customNextAppointment" class="hidden">
     </div>
     
     <!-- قسم المواعيد السابقة (اختياري) -->
@@ -435,7 +463,6 @@
       if (username === "محمد بن علي") {
         document.getElementById("adminPanelBtn").classList.remove("hidden");
       } else {
-        // تحقق من البريد الإلكتروني للحساب
         let accountData = (username && username.toLowerCase() === "admin") ? localStorage.getItem("account_admin") : localStorage.getItem("account_" + username);
         if (accountData) {
           let account = JSON.parse(accountData);
@@ -473,10 +500,10 @@
           updateWelcome();
           showSection("main");
         } else {
-          alert("اسم المستخدم أو كلمة المرور غير صحيحة");
+          showNotification("اسم المستخدم أو كلمة المرور غير صحيحة", "error");
         }
       } else {
-        alert("الحساب غير موجود. الرجاء إنشاء حساب.");
+        showNotification("الحساب غير موجود", "error");
       }
     }
 
@@ -486,7 +513,6 @@
       let password = document.getElementById("registerPassword").value;
       let confirmPassword = document.getElementById("registerConfirmPassword").value;
       
-      // منع التسجيل باسم الحساب المالك "محمد بن علي"
       if (username === "محمد بن علي") {
         alert("اسم المستخدم محمد بن علي محجوز");
         return;
@@ -551,13 +577,12 @@
       } else {
         localStorage.setItem("account_" + username, JSON.stringify(account));
       }
-      alert("تم إعادة تعيين كلمة المرور بنجاح");
+      showNotification("تم إعادة تعيين كلمة المرور بنجاح", "success");
       showSection("login");
     }
 
     function handleFieldWorkChange() {
       let type = document.getElementById("fieldWorkType").value;
-      // إخفاء جميع الأقسام الإضافية
       document.getElementById("section_vaccination").classList.add("hidden");
       document.getElementById("section_diagnosis").classList.add("hidden");
       document.getElementById("section_delivery").classList.add("hidden");
@@ -636,32 +661,36 @@
       let location = document.getElementById("breederLocation").value;
       let fieldWorkType = document.getElementById("fieldWorkType").value;
       
-      // التأكد من تعبئة الحقول الأساسية
       if (!name || !phone || !location || !fieldWorkType) {
         showNotification("يرجى تعبئة الحقول الأساسية!", "error");
         return;
       }
       
-      // بناء كائن السجل الأساسي
       let record = { name, phone, location, fieldWorkType, previousAppointments: [] };
       
-      // جمع بيانات المواعيد السابقة إن وُجدت
       let prevContainer = document.getElementById("previousAppointmentsContainer");
       let prevNodes = prevContainer.querySelectorAll(".prev-app");
       prevNodes.forEach(div => {
         let dateVal = div.querySelector("input[type='date']").value;
         let vaccineVal = div.querySelector("select").value;
-        // إذا كانت قيمة التاريخ غير فارغة نضيفها
         if (dateVal) {
           record.previousAppointments.push({ date: dateVal, vaccine: vaccineVal });
         }
       });
       
-      // معالجة كل قسم بناءً على نوع العمل الميداني
       if (fieldWorkType === "تحصين") {
         let vaccineType = document.getElementById("vaccination_vaccineType").value;
         let vaccDate = document.getElementById("vaccination_date").value;
-        let vaccNext = document.getElementById("vaccination_nextAppointment").value;
+        let vaccNextSelect = document.getElementById("vaccination_nextAppointment").value;
+        let vaccNext = vaccNextSelect;
+        if(vaccNextSelect === "custom") {
+          vaccNext = document.getElementById("vaccination_customNextAppointment").value;
+        } else if (vaccNextSelect === "14" || vaccNextSelect === "21") {
+          let daysToAdd = parseInt(vaccNextSelect);
+          let dateObj = new Date(vaccDate);
+          dateObj.setDate(dateObj.getDate() + daysToAdd);
+          vaccNext = dateObj.toISOString();
+        }
         if (!vaccineType || !vaccDate || !vaccNext) {
           showNotification("يرجى تعبئة بيانات التحصين كاملة!", "error");
           return;
@@ -677,7 +706,16 @@
         let diseaseType = document.getElementById("diagnosis_diseaseType").value;
         let treatment = document.getElementById("diagnosis_treatment").value;
         let diagDate = document.getElementById("diagnosis_date").value;
-        let diagNext = document.getElementById("diagnosis_nextAppointment").value;
+        let diagNextSelect = document.getElementById("diagnosis_nextAppointment").value;
+        let diagNext = diagNextSelect;
+        if(diagNextSelect === "custom") {
+          diagNext = document.getElementById("diagnosis_customNextAppointment").value;
+        } else if (diagNextSelect === "14" || diagNextSelect === "21") {
+          let daysToAdd = parseInt(diagNextSelect);
+          let dateObj = new Date(diagDate);
+          dateObj.setDate(dateObj.getDate() + daysToAdd);
+          diagNext = dateObj.toISOString();
+        }
         if (!diseaseType || !treatment || !diagDate || !diagNext) {
           showNotification("يرجى تعبئة بيانات التشخيص كاملة!", "error");
           return;
@@ -695,7 +733,16 @@
         let deliveryDate = document.getElementById("delivery_date").value;
         let deliveryType = document.getElementById("delivery_type").value;
         let deliveryTreatment = document.getElementById("delivery_treatment").value;
-        let deliveryNext = document.getElementById("delivery_nextAppointment").value;
+        let deliveryNextSelect = document.getElementById("delivery_nextAppointment").value;
+        let deliveryNext = deliveryNextSelect;
+        if(deliveryNextSelect === "custom") {
+          deliveryNext = document.getElementById("delivery_customNextAppointment").value;
+        } else if (deliveryNextSelect === "14" || deliveryNextSelect === "21") {
+          let daysToAdd = parseInt(deliveryNextSelect);
+          let dateObj = new Date(deliveryDate);
+          dateObj.setDate(dateObj.getDate() + daysToAdd);
+          deliveryNext = dateObj.toISOString();
+        }
         if (!animalType || !deliveryDate || !deliveryType || !deliveryTreatment || !deliveryNext) {
           showNotification("يرجى تعبئة بيانات الولادة كاملة!", "error");
           return;
@@ -713,19 +760,27 @@
         let surgeryType = document.getElementById("surgery_type").value;
         let surgeryTreatment = document.getElementById("surgery_treatment").value;
         let surgeryDate = document.getElementById("surgery_date").value;
-        let surgeryNext = document.getElementById("surgery_nextAppointment").value;
+        let surgeryNextSelect = document.getElementById("surgery_nextAppointment").value;
+        let surgeryNext = surgeryNextSelect;
+        if(surgeryNextSelect === "custom") {
+          surgeryNext = document.getElementById("surgery_customNextAppointment").value;
+        } else if (surgeryNextSelect === "14" || surgeryNextSelect === "21") {
+          let daysToAdd = parseInt(surgeryNextSelect);
+          let dateObj = new Date(surgeryDate);
+          dateObj.setDate(dateObj.getDate() + daysToAdd);
+          surgeryNext = dateObj.toISOString();
+        }
         if (!surgeryType || !surgeryTreatment || !surgeryDate || !surgeryNext) {
           showNotification("يرجى تعبئة بيانات الجراحة كاملة!", "error");
           return;
         }
-        // بحسب الطلب بيانات الجراحة لا تُضاف إلى سجل المربين
-        showNotification("تم الإرسال بنجاح!", "success");
-        clearMainFields();
-        return;
-      }
-      else {
-        showNotification("نوع العمل الميداني غير معروف!", "error");
-        return;
+        record.details = {
+          surgeryType: surgeryType,
+          surgeryTreatment: surgeryTreatment,
+          surgeryDate: surgeryDate,
+          nextAppointment: surgeryNext
+        };
+        breeders.push(record);
       }
       
       localStorage.setItem("breeders_" + localStorage.getItem("username"), JSON.stringify(breeders));
@@ -740,17 +795,20 @@
       document.getElementById("breederLocation").value = "";
       document.getElementById("fieldWorkType").selectedIndex = 0;
       
-      // تنظيف أقسام العمل الميداني
       document.getElementById("section_vaccination").classList.add("hidden");
       document.getElementById("vaccination_vaccineType").selectedIndex = 0;
       document.getElementById("vaccination_date").value = "";
       document.getElementById("vaccination_nextAppointment").value = "";
+      document.getElementById("vaccination_customNextAppointment").value = "";
+      document.getElementById("vaccination_customNextAppointment").classList.add("hidden");
       
       document.getElementById("section_diagnosis").classList.add("hidden");
       document.getElementById("diagnosis_diseaseType").value = "";
       document.getElementById("diagnosis_treatment").value = "";
       document.getElementById("diagnosis_date").value = "";
       document.getElementById("diagnosis_nextAppointment").value = "";
+      document.getElementById("diagnosis_customNextAppointment").value = "";
+      document.getElementById("diagnosis_customNextAppointment").classList.add("hidden");
       
       document.getElementById("section_delivery").classList.add("hidden");
       document.getElementById("delivery_animalType").selectedIndex = 0;
@@ -758,18 +816,20 @@
       document.getElementById("delivery_type").selectedIndex = 0;
       document.getElementById("delivery_treatment").value = "";
       document.getElementById("delivery_nextAppointment").value = "";
+      document.getElementById("delivery_customNextAppointment").value = "";
+      document.getElementById("delivery_customNextAppointment").classList.add("hidden");
       
       document.getElementById("section_surgery").classList.add("hidden");
       document.getElementById("surgery_type").value = "";
       document.getElementById("surgery_treatment").value = "";
       document.getElementById("surgery_date").value = "";
       document.getElementById("surgery_nextAppointment").value = "";
+      document.getElementById("surgery_customNextAppointment").value = "";
+      document.getElementById("surgery_customNextAppointment").classList.add("hidden");
       
-      // تنظيف قسم المواعيد السابقة
       document.getElementById("previousAppointmentsContainer").innerHTML = "";
     }
 
-    // دالة لحساب الوقت المتبقي بالأيام والساعات (عرض القائمة)
     function calculateRemainingTime(date) {
       if (!date) return "";
       let diff = new Date(date) - new Date();
@@ -780,7 +840,6 @@
       return sign + days + " يوم و " + hours + " ساعة";
     }
 
-    // دالة لحساب الوقت المتبقي بالتفصيل (الأيام والساعات والدقائق والثواني)
     function calculateRemainingTimeDetailed(date) {
       if (!date) return "";
       let diff = new Date(date) - new Date();
@@ -843,6 +902,13 @@
             <p>العلاج: ${breeder.details.treatment}</p>
             <p>الموعد القادم: <span id="detailedCountdown">${calculateRemainingTimeDetailed(breeder.details.nextAppointment)}</span></p>
           `;
+        } else if (breeder.fieldWorkType === "جراحة") {
+          detailExtra.innerHTML = `
+            <p>نوع الجراحة: ${breeder.details.surgeryType}</p>
+            <p>العلاج: ${breeder.details.surgeryTreatment}</p>
+            <p>تاريخ الجراحة: ${breeder.details.surgeryDate}</p>
+            <p>الموعد القادم: <span id="detailedCountdown">${calculateRemainingTimeDetailed(breeder.details.nextAppointment)}</span></p>
+          `;
         }
       }
       let detailPrev = document.getElementById("detailPreviousAppointments");
@@ -858,7 +924,6 @@
       }
       showSection("breederDetail");
 
-      // تحديث العد التنازلي بالتفصيل كل ثانية
       if (breeder.details && breeder.details.nextAppointment) {
         detailInterval = setInterval(function() {
           let countdownElement = document.getElementById("detailedCountdown");
@@ -887,20 +952,50 @@
       if (breeder.fieldWorkType === "تحصين" && breeder.details) {
         document.getElementById("vaccination_vaccineType").value = breeder.details.vaccineType;
         document.getElementById("vaccination_date").value = breeder.details.vaccinationDate;
-        document.getElementById("vaccination_nextAppointment").value = breeder.details.nextAppointment;
+        if(breeder.details.nextAppointment === "14" || breeder.details.nextAppointment === "21"){
+          document.getElementById("vaccination_nextAppointment").value = breeder.details.nextAppointment;
+        } else {
+          document.getElementById("vaccination_nextAppointment").value = "custom";
+          document.getElementById("vaccination_customNextAppointment").value = breeder.details.nextAppointment;
+          document.getElementById("vaccination_customNextAppointment").classList.remove("hidden");
+        }
       }
       else if (breeder.fieldWorkType === "تشخيص" && breeder.details) {
         document.getElementById("diagnosis_diseaseType").value = breeder.details.diseaseType;
         document.getElementById("diagnosis_treatment").value = breeder.details.treatment;
         document.getElementById("diagnosis_date").value = breeder.details.diagnosisDate;
-        document.getElementById("diagnosis_nextAppointment").value = breeder.details.nextAppointment;
+        if(breeder.details.nextAppointment === "14" || breeder.details.nextAppointment === "21"){
+          document.getElementById("diagnosis_nextAppointment").value = breeder.details.nextAppointment;
+        } else {
+          document.getElementById("diagnosis_nextAppointment").value = "custom";
+          document.getElementById("diagnosis_customNextAppointment").value = breeder.details.nextAppointment;
+          document.getElementById("diagnosis_customNextAppointment").classList.remove("hidden");
+        }
       }
       else if (breeder.fieldWorkType === "ولادة" && breeder.details) {
         document.getElementById("delivery_animalType").value = breeder.details.animalType;
         document.getElementById("delivery_date").value = breeder.details.deliveryDate;
         document.getElementById("delivery_type").value = breeder.details.deliveryType;
         document.getElementById("delivery_treatment").value = breeder.details.treatment;
-        document.getElementById("delivery_nextAppointment").value = breeder.details.nextAppointment;
+        if(breeder.details.nextAppointment === "14" || breeder.details.nextAppointment === "21"){
+          document.getElementById("delivery_nextAppointment").value = breeder.details.nextAppointment;
+        } else {
+          document.getElementById("delivery_nextAppointment").value = "custom";
+          document.getElementById("delivery_customNextAppointment").value = breeder.details.nextAppointment;
+          document.getElementById("delivery_customNextAppointment").classList.remove("hidden");
+        }
+      }
+      else if (breeder.fieldWorkType === "جراحة" && breeder.details) {
+        document.getElementById("surgery_type").value = breeder.details.surgeryType;
+        document.getElementById("surgery_treatment").value = breeder.details.surgeryTreatment;
+        document.getElementById("surgery_date").value = breeder.details.surgeryDate;
+        if(breeder.details.nextAppointment === "14" || breeder.details.nextAppointment === "21"){
+          document.getElementById("surgery_nextAppointment").value = breeder.details.nextAppointment;
+        } else {
+          document.getElementById("surgery_nextAppointment").value = "custom";
+          document.getElementById("surgery_customNextAppointment").value = breeder.details.nextAppointment;
+          document.getElementById("surgery_customNextAppointment").classList.remove("hidden");
+        }
       }
       breeders.splice(index, 1);
       localStorage.setItem("breeders_" + localStorage.getItem("username"), JSON.stringify(breeders));
@@ -994,7 +1089,7 @@
       if (confirm("متأكد من تسجيل الخروج؟")) {
         localStorage.removeItem("username");
         showSection("login");
-        alert("تم تسجيل الخروج");
+        showNotification("تم تسجيل الخروج", "success");
       }
     }
 
@@ -1009,8 +1104,27 @@
       }
       showBreeders();
     }
+  
+    function validatePhoneNumber(input) {
+      let phone = input.value;
+      if (!/^\d+$/.test(phone)) {
+        showNotification("يرجى كتابة رقم صحيح", "error");
+        input.value = "";
+      }
+    }
+
+    // دالة تعديل ظهور الحقل الخاص بالموعد الإضافي
+    function handleNextAppointmentChange(selectElement) {
+      let customInput = selectElement.nextElementSibling;
+      if (selectElement.value === "custom") {
+        customInput.classList.remove("hidden");
+        customInput.type = "date";
+      } else {
+        customInput.classList.add("hidden");
+      }
+    }
   </script>
 
-  <p style="margin-top:30px; font-size:12px;">تم صنع الموقع بواسطة الدكتور علي بلال</p>
+  <p style="margin-top:30px; font-size:12px;">تصميم وإنشاء الدكتور علي بلال</p>
 </body>
 </html>
