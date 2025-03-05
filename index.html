@@ -6,7 +6,7 @@
   <title>سجل المربين</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    /* التنسيقات الأساسية */
+    /* بعض التنسيقات الأساسية */
     body {
       font-family: Arial, sans-serif;
       background-color: #f0f4f8;
@@ -23,11 +23,8 @@
       border-radius: 10px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       margin-top: 30px;
-      position: relative;
     }
-    .hidden {
-      display: none;
-    }
+    .hidden { display: none; }
     /* زر القائمة الرئيسي */
     .menu-btn {
       background-color: #009688;
@@ -53,7 +50,7 @@
       display: none;
       background-color: #ffffff;
       border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       padding: 20px;
       width: 200px;
       z-index: 1000;
@@ -75,33 +72,9 @@
       position: relative;
       border: 1px solid #ddd;
       transition: background-color 0.3s ease;
-      opacity: 0;
-      animation: fadeInUp 0.5s forwards;
     }
-    .record:hover {
-      background-color: #f1f1f1;
-    }
-    .record .toggle-btn {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      left: 0; /* في البداية تكون على اليسار */
-      padding: 5px 10px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      background-color: silver;
-      transition: background-color 0.3s ease, transform 0.3s ease;
-    }
-    .record .toggle-btn.right {
-      left: auto;
-      right: 0;
-      background-color: green;
-    }
-    .edit-btn,
-    .delete-btn,
-    .hide-btn,
-    .details-btn {
+    .record:hover { background-color: #f1f1f1; }
+    .edit-btn, .delete-btn, .hide-btn, .details-btn {
       background-color: #FFC107;
       color: white;
       padding: 6px 12px;
@@ -110,12 +83,8 @@
       margin-left: 5px;
       border-radius: 5px;
     }
-    .delete-btn {
-      background-color: #E91E63;
-    }
-    .hide-btn {
-      background-color: #FF5722;
-    }
+    .delete-btn { background-color: #E91E63; }
+    .hide-btn { background-color: #FF5722; }
     input[type="text"],
     input[type="password"],
     input[type="email"],
@@ -129,16 +98,13 @@
       border: 1px solid #ccc;
       box-sizing: border-box;
     }
-    /* تنسيق حقل التاريخ الاختياري */
     .custom-date {
       border: 2px solid #009688;
       background-color: #e0f2f1;
       color: #333;
     }
     /* تأثير إسقاط كلمة الترحيب */
-    #welcome {
-      animation: dropDown 1.5s ease-out;
-    }
+    #welcome { animation: dropDown 1.5s ease-out; }
     @keyframes dropDown {
       from { transform: translateY(-50px); opacity: 0; }
       to { transform: translateY(0); opacity: 1; }
@@ -147,11 +113,7 @@
       from { transform: translateX(100%); opacity: 0; }
       to { transform: translateX(0); opacity: 1; }
     }
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    /* تنسيق الإشعارات لتكون الأيقونة في أقصى اليمين */
+    /* تنسيق الإشعارات */
     .notification {
       position: fixed;
       top: 20px;
@@ -161,18 +123,17 @@
       border: 2px solid;
       border-radius: 8px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
       z-index: 2000;
       animation: shake 0.5s ease-in-out;
       min-width: 300px;
     }
     .notification.success {
-      background-color: rgba(0, 128, 0, 0.3);
+      background-color: rgba(0,128,0,0.3);
       border-color: #008000;
     }
     .notification.error {
-      background-color: rgba(255, 0, 0, 0.3);
+      background-color: rgba(255,0,0,0.3);
       border-color: #FF0000;
     }
     .notification .circle {
@@ -186,12 +147,8 @@
       font-weight: bold;
       flex-shrink: 0;
     }
-    .notification.success .circle {
-      background-color: #008000;
-    }
-    .notification.error .circle {
-      background-color: #FF0000;
-    }
+    .notification.success .circle { background-color: #008000; margin-left: 15px; }
+    .notification.error .circle { background-color: #FF0000; margin-right: 15px; }
     .notification .progress {
       position: absolute;
       bottom: 0;
@@ -203,13 +160,14 @@
       border-bottom-left-radius: 6px;
       border-bottom-right-radius: 6px;
     }
-    @keyframes progressShrink {
-      from { width: 100%; }
-      to { width: 0; }
-    }
-    @keyframes fadeOut {
-      from { opacity: 1; }
-      to { opacity: 0; }
+    @keyframes progressShrink { from { width: 100%; } to { width: 0; } }
+    @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+    @keyframes tilt {
+      0% { transform: rotate(0deg); }
+      25% { transform: rotate(5deg); }
+      50% { transform: rotate(0); }
+      75% { transform: rotate(-5deg); }
+      100% { transform: rotate(0); }
     }
     @keyframes shake {
       0% { transform: translateX(-50%) rotate(0deg); }
@@ -218,66 +176,21 @@
       75% { transform: translateX(-50%) rotate(-3deg); }
       100% { transform: translateX(-50%) rotate(0deg); }
     }
-    /* نافذة التنبيه عند عدم حفظ النموذج */
-    .unsaved-modal {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: #FFF9C4;
-      border: 2px solid #FBC02D;
-      border-radius: 8px;
-      padding: 20px;
-      z-index: 3000;
-      text-align: center;
-    }
-    .unsaved-modal .warning {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-    }
-    .unsaved-modal .warning .text {
-      flex: 1;
-      text-align: center;
-      font-weight: bold;
-    }
-    .unsaved-modal .warning .icon {
-      font-size: 24px;
-      color: #FBC02D;
-    }
-    .unsaved-modal button {
-      background-color: green;
-      color: white;
-      padding: 8px 16px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
   </style>
 </head>
 <body>
 
   <!-- زر القائمة -->
-  <button class="menu-btn" onclick="handleNavigation('menu')">☰ القائمة</button>
+  <button class="menu-btn" onclick="toggleMenu()">☰ القائمة</button>
 
   <!-- القائمة الجانبية -->
   <div id="menu" class="menu">
-    <button class="menu-btn" onclick="handleNavigation('main')">القائمة الرئيسية</button>
-    <button class="menu-btn" onclick="handleNavigation('breeders')">سجل المربين</button>
-    <button class="menu-btn" onclick="handleNavigation('resetPassword')">إعادة تعيين كلمة المرور</button>
-    <!-- زر لوحة التحكم الإدارية يظهر فقط للحساب ownership -->
-    <button id="adminPanelBtn" class="menu-btn hidden" onclick="handleNavigation('adminPanel')">لوحة التحكم الإدارية</button>
+    <button class="menu-btn" onclick="showSection('main')">القائمة الرئيسية</button>
+    <button class="menu-btn" onclick="showSection('breeders')">سجل المربين</button>
+    <button class="menu-btn" onclick="showSection('resetPassword')">إعادة تعيين كلمة المرور</button>
+    <!-- يظهر زر لوحة التحكم الإدارية للحساب المالك أو لأي حساب بريده الإلكتروني thepro332211yt@gmail.com -->
+    <button id="adminPanelBtn" class="menu-btn hidden" onclick="showSection('adminPanel')">لوحة التحكم الإدارية</button>
     <button class="menu-btn" onclick="logout()">تسجيل خروج</button>
-  </div>
-
-  <!-- نافذة التنبيه عند عدم حفظ النموذج -->
-  <div id="unsavedModal" class="unsaved-modal hidden">
-    <div class="warning">
-      <span class="text">يرجى ارسال النموذج</span>
-      <span class="icon">⚠️</span>
-    </div>
-    <button onclick="proceedToSection()">عدم الحفظ</button>
   </div>
 
   <!-- صفحة تسجيل الدخول -->
@@ -329,36 +242,89 @@
   <!-- الصفحة الرئيسية بعد تسجيل الدخول -->
   <div id="main" class="container hidden">
     <h2 id="welcome">أهلا بك</h2>
+    <!-- الحقول الأساسية -->
     <input type="text" id="breederName" placeholder="اسم المربي">
     <input type="text" id="breederPhone" placeholder="رقم جوال المربي">
-    <!-- حقل الموقع المضاف -->
     <input type="text" id="breederLocation" placeholder="الموقع">
-    <select id="vaccineType">
-      <option value="معوي">معوي</option>
-      <option value="دموي">دموي</option>
-      <option value="مزدوج">مزدوج</option>
-      <option value="طاعون">طاعون</option>
-      <option value="جدري">جدري</option>
-      <option value="قلاعية">قلاعية</option>
+    <!-- اختيار نوع العمل الميداني -->
+    <select id="fieldWorkType" onchange="handleFieldWorkChange()">
+      <option value="">اختر نوع العمل الميداني</option>
+      <option value="تحصين">تحصين</option>
+      <option value="تشخيص">تشخيص</option>
+      <option value="ولادة">ولادة</option>
+      <option value="جراحة">جراحة</option>
     </select>
-    <br><br>
-    <label>تاريخ التطعيم:</label>
-    <input type="datetime-local" id="vaccinationDate">
-    <br><br>
-    <label for="nextAppointment">الموعد الجاي بعد:</label>
-    <select id="nextAppointment" onchange="handleNextAppointmentChange()">
-      <option value="21">ثلاث أسابيع</option>
-      <option value="14">اسبوعين</option>
-      <option value="30">شهر</option>
-      <option value="optional">اختياري</option>
-    </select>
-    <!-- حقل إضافي للموعد الاختياري يظهر عند الاختيار -->
-    <div id="optionalDateDiv" class="hidden">
-      <label>اختر التاريخ:</label>
-      <input type="date" id="optionalNextAppointment" class="custom-date">
+    
+    <!-- قسم تحصين -->
+    <div id="section_vaccination" class="hidden">
+      <select id="vaccination_vaccineType">
+        <option value="">اختر نوع التطعيم</option>
+        <option value="معوي">معوي</option>
+        <option value="دموي">دموي</option>
+        <option value="مزدوج">مزدوج</option>
+        <option value="طاعون">طاعون</option>
+        <option value="بروسيلا">بروسيلا</option>
+        <option value="جدري">جدري</option>
+        <option value="قلاعية">قلاعية</option>
+      </select>
+      <br>
+      <label>تاريخ التحصين:</label>
+      <input type="datetime-local" id="vaccination_date">
+      <br>
+      <label>الموعد القادم:</label>
+      <input type="datetime-local" id="vaccination_nextAppointment">
     </div>
-    <br>
-    <!-- قسم المواعيد السابقة -->
+    
+    <!-- قسم تشخيص -->
+    <div id="section_diagnosis" class="hidden">
+      <input type="text" id="diagnosis_diseaseType" placeholder="نوع المرض">
+      <input type="text" id="diagnosis_treatment" placeholder="نوع العلاج">
+      <br>
+      <label>تاريخ التشخيص:</label>
+      <input type="datetime-local" id="diagnosis_date">
+      <br>
+      <label>الموعد القادم:</label>
+      <input type="datetime-local" id="diagnosis_nextAppointment">
+    </div>
+    
+    <!-- قسم ولادة -->
+    <div id="section_delivery" class="hidden">
+      <select id="delivery_animalType">
+        <option value="">اختر نوع الحيوان</option>
+        <option value="إبل">إبل</option>
+        <option value="بقر">بقر</option>
+        <option value="ماعز">ماعز</option>
+        <option value="ضان">ضان</option>
+      </select>
+      <br>
+      <label>تاريخ الولادة:</label>
+      <input type="datetime-local" id="delivery_date">
+      <br>
+      <select id="delivery_type">
+        <option value="">اختر نوع الولادة</option>
+        <option value="ولادة طبيعية">ولادة طبيعية</option>
+        <option value="ولادة قيصرية">ولادة قيصرية</option>
+      </select>
+      <br>
+      <input type="text" id="delivery_treatment" placeholder="العلاج">
+      <br>
+      <label>الموعد القادم:</label>
+      <input type="datetime-local" id="delivery_nextAppointment">
+    </div>
+    
+    <!-- قسم جراحة -->
+    <div id="section_surgery" class="hidden">
+      <input type="text" id="surgery_type" placeholder="نوع الجراحة">
+      <input type="text" id="surgery_treatment" placeholder="العلاج">
+      <br>
+      <label>تاريخ الجراحة:</label>
+      <input type="datetime-local" id="surgery_date">
+      <br>
+      <label>الموعد القادم:</label>
+      <input type="datetime-local" id="surgery_nextAppointment">
+    </div>
+    
+    <!-- قسم المواعيد السابقة (اختياري) -->
     <div id="previousAppointmentsSection">
       <h3>المواعيد السابقة (اختياري)</h3>
       <div id="previousAppointmentsContainer"></div>
@@ -382,8 +348,8 @@
     <p id="detailName"></p>
     <p id="detailPhone"></p>
     <p id="detailLocation"></p>
-    <p id="detailVaccine"></p>
-    <p id="detailNextAppointment"></p>
+    <p id="detailFieldWork"></p>
+    <div id="detailExtra"></div>
     <h3>المواعيد السابقة:</h3>
     <div id="detailPreviousAppointments"></div>
     <br>
@@ -398,9 +364,19 @@
 
   <script>
     let breeders = [];
-    let previousAppointments = [];
-    let pendingSection = ""; // لتخزين القسم المطلوب التنقل إليه عند وجود بيانات غير محفوظة
-
+    let detailInterval; // متغير لتحديث العد التنازلي في صفحة تفاصيل المربي
+    
+    // إنشاء حساب المالك "محمد بن علي" إذا لم يكن موجودًا مسبقًا
+    if (!localStorage.getItem("account_owner")) {
+      let ownerAccount = {
+        username: "محمد بن علي",
+        email: "owner@example.com",
+        password: "ownerpass",
+        createdAt: new Date().toISOString()
+      };
+      localStorage.setItem("account_owner", JSON.stringify(ownerAccount));
+    }
+    // إنشاء حساب المسؤول "admin" كما في السابق
     if (!localStorage.getItem("account_admin")) {
       let adminAccount = {
         username: "admin",
@@ -411,73 +387,66 @@
       localStorage.setItem("account_admin", JSON.stringify(adminAccount));
     }
 
-    function handleNavigation(target) {
-      // إذا كان المستخدم يحاول التنقل من صفحة main والحقول غير فارغة، نعرض نافذة التنبيه
-      if (!document.getElementById("main").classList.contains("hidden")) {
-        if (hasUnsavedData()) {
-          pendingSection = target;
-          showUnsavedModal();
-          return;
-        }
-      }
-      showSection(target);
-    }
-
-    function hasUnsavedData() {
-      // التحقق من وجود بيانات في حقول النموذج الرئيسية
-      return document.getElementById("breederName").value ||
-             document.getElementById("breederPhone").value ||
-             document.getElementById("breederLocation").value ||
-             document.getElementById("vaccinationDate").value ||
-             document.getElementById("optionalNextAppointment").value;
-    }
-
-    function showUnsavedModal() {
-      document.getElementById("unsavedModal").classList.remove("hidden");
-    }
-
-    function proceedToSection() {
-      document.getElementById("unsavedModal").classList.add("hidden");
-      clearMainForm();
-      showSection(pendingSection);
-      pendingSection = "";
-    }
-
-    function clearMainForm() {
-      document.getElementById("breederName").value = "";
-      document.getElementById("breederPhone").value = "";
-      document.getElementById("breederLocation").value = "";
-      document.getElementById("vaccinationDate").value = "";
-      document.getElementById("optionalNextAppointment").value = "";
-      document.getElementById("previousAppointmentsContainer").innerHTML = "";
+    function toggleMenu() {
+      let menu = document.getElementById("menu");
+      menu.classList.toggle("show");
     }
 
     function showSection(section) {
+      // عند تغيير الصفحة يتم إيقاف تحديث العد التنازلي إن وجد
+      if(detailInterval) {
+        clearInterval(detailInterval);
+        detailInterval = null;
+      }
       const sections = ["login", "register", "main", "breeders", "resetPassword", "adminPanel", "breederDetail"];
       sections.forEach(s => {
         document.getElementById(s).classList.add("hidden");
       });
-      if (section === "adminPanel" && localStorage.getItem("username")?.toLowerCase() !== "ownership") {
-        alert("غير مصرح");
-        return;
+      // السماح بدخول لوحة التحكم الإدارية للحساب المالك "محمد بن علي" أو لأي حساب بريده الإلكتروني thepro332211yt@gmail.com
+      if (section === "adminPanel") {
+         let username = localStorage.getItem("username");
+         let allowed = false;
+         if (username === "محمد بن علي") {
+           allowed = true;
+         } else {
+           let accountData = (username && username.toLowerCase() === "admin") ? localStorage.getItem("account_admin") : localStorage.getItem("account_" + username);
+           if (accountData) {
+             let account = JSON.parse(accountData);
+             if (account.email === "thepro332211yt@gmail.com") {
+               allowed = true;
+             }
+           }
+         }
+         if (!allowed) {
+           alert("غير مصرح");
+           return;
+         }
       }
       document.getElementById(section).classList.remove("hidden");
       document.getElementById("menu").classList.remove("show");
-      if (section === "breeders") {
-        showBreeders();
-      }
-      if (section === "adminPanel") {
-        showAdminPanel();
-      }
+      if (section === "breeders") { showBreeders(); }
+      if (section === "adminPanel") { showAdminPanel(); }
     }
 
     function updateWelcome() {
       let username = localStorage.getItem("username");
       document.getElementById("welcome").innerText = "أهلا بك يا " + username;
-      if (username.toLowerCase() === "ownership") {
+      // اظهار زر لوحة التحكم الإدارية للحساب المالك أو للحساب الذي بريده thepro332211yt@gmail.com
+      if (username === "محمد بن علي") {
         document.getElementById("adminPanelBtn").classList.remove("hidden");
       } else {
-        document.getElementById("adminPanelBtn").classList.add("hidden");
+        // تحقق من البريد الإلكتروني للحساب
+        let accountData = (username && username.toLowerCase() === "admin") ? localStorage.getItem("account_admin") : localStorage.getItem("account_" + username);
+        if (accountData) {
+          let account = JSON.parse(accountData);
+          if (account.email === "thepro332211yt@gmail.com") {
+            document.getElementById("adminPanelBtn").classList.remove("hidden");
+          } else {
+            document.getElementById("adminPanelBtn").classList.add("hidden");
+          }
+        } else {
+          document.getElementById("adminPanelBtn").classList.add("hidden");
+        }
       }
     }
 
@@ -485,15 +454,14 @@
       let username = document.getElementById("loginUsername").value;
       let password = document.getElementById("loginPassword").value;
       let accountData;
-      if (username.toLowerCase() === "admin") {
+      if (username === "محمد بن علي") {
+        accountData = localStorage.getItem("account_owner");
+      } else if (username.toLowerCase() === "admin") {
         accountData = localStorage.getItem("account_admin");
       } else {
         accountData = localStorage.getItem("account_" + username);
       }
       if (accountData) {
-        if (username.toLowerCase() === "ownership") {
-          accountData = atob(accountData);
-        }
         let account = JSON.parse(accountData);
         if (username === account.username && password === account.password) {
           if (account.banned) {
@@ -517,7 +485,12 @@
       let email = document.getElementById("registerEmail").value;
       let password = document.getElementById("registerPassword").value;
       let confirmPassword = document.getElementById("registerConfirmPassword").value;
-        
+      
+      // منع التسجيل باسم الحساب المالك "محمد بن علي"
+      if (username === "محمد بن علي") {
+        alert("اسم المستخدم محمد بن علي محجوز");
+        return;
+      }
       if (username.toLowerCase() === "admin") {
         alert("اسم المستخدم admin محجوز");
         return;
@@ -530,31 +503,17 @@
         alert("كلمة المرور وتأكيدها غير متطابقين");
         return;
       }
-      if (username.toLowerCase() === "ownership") {
-        let count = localStorage.getItem("ownershipCount") || 0;
-        if (parseInt(count) >= 2) {
-          alert("لا يمكنك إنشاء حساب بالاسم ownership لأكثر من شخصين");
-          return;
-        } else {
-          localStorage.setItem("ownershipCount", parseInt(count) + 1);
-        }
-      }
       if (localStorage.getItem("account_" + username)) {
         alert("اسم المستخدم موجود بالفعل");
         return;
       }
-      let account = {   
-        username,   
-        email,   
-        password,   
+      let account = {
+        username,
+        email,
+        password,
         createdAt: new Date().toISOString()
       };
-      if (username.toLowerCase() === "ownership") {
-        let encryptedAccount = btoa(JSON.stringify(account));
-        localStorage.setItem("account_" + username, encryptedAccount);
-      } else {
-        localStorage.setItem("account_" + username, JSON.stringify(account));
-      }
+      localStorage.setItem("account_" + username, JSON.stringify(account));
       localStorage.setItem("username", username);
       breeders = JSON.parse(localStorage.getItem("breeders_" + username)) || [];
       updateWelcome();
@@ -566,27 +525,29 @@
       let email = document.getElementById("resetEmail").value;
       let newPassword = document.getElementById("resetNewPassword").value;
       let confirmPassword = document.getElementById("resetConfirmPassword").value;
-        
+      
       if (newPassword !== confirmPassword) {
         alert("كلمة المرور وتأكيدها غير متطابقين");
         return;
       }
-      let accountData = localStorage.getItem("account_" + username);
+      let accountData;
+      if (username === "محمد بن علي") {
+        accountData = localStorage.getItem("account_owner");
+      } else {
+        accountData = localStorage.getItem("account_" + username);
+      }
       if (!accountData) {
         alert("الحساب غير موجود");
         return;
       }
-      if (username.toLowerCase() === "ownership") {
-        accountData = atob(accountData);
-      }
       let account = JSON.parse(accountData);
       if (account.email !== email) {
-        alert("الايميل او اسم المستخدم غير صالح");
+        alert("الايميل أو اسم المستخدم غير صالح");
         return;
       }
       account.password = newPassword;
-      if (username.toLowerCase() === "ownership") {
-        localStorage.setItem("account_" + username, btoa(JSON.stringify(account)));
+      if (username === "محمد بن علي") {
+        localStorage.setItem("account_owner", JSON.stringify(account));
       } else {
         localStorage.setItem("account_" + username, JSON.stringify(account));
       }
@@ -594,13 +555,21 @@
       showSection("login");
     }
 
-    function handleNextAppointmentChange() {
-      let select = document.getElementById("nextAppointment");
-      let optionalDiv = document.getElementById("optionalDateDiv");
-      if (select.value === "optional") {
-        optionalDiv.classList.remove("hidden");
-      } else {
-        optionalDiv.classList.add("hidden");
+    function handleFieldWorkChange() {
+      let type = document.getElementById("fieldWorkType").value;
+      // إخفاء جميع الأقسام الإضافية
+      document.getElementById("section_vaccination").classList.add("hidden");
+      document.getElementById("section_diagnosis").classList.add("hidden");
+      document.getElementById("section_delivery").classList.add("hidden");
+      document.getElementById("section_surgery").classList.add("hidden");
+      if (type === "تحصين") {
+        document.getElementById("section_vaccination").classList.remove("hidden");
+      } else if (type === "تشخيص") {
+        document.getElementById("section_diagnosis").classList.remove("hidden");
+      } else if (type === "ولادة") {
+        document.getElementById("section_delivery").classList.remove("hidden");
+      } else if (type === "جراحة") {
+        document.getElementById("section_surgery").classList.remove("hidden");
       }
     }
 
@@ -612,123 +581,228 @@
       const dateInput = document.createElement("input");
       dateInput.type = "date";
       dateInput.placeholder = "اختر تاريخ الموعد";
-      dateInput.onchange = function() {
-        if (!this.nextElementSibling) {
-          const vaccineSelect = document.createElement("select");
-          vaccineSelect.innerHTML = `
-            <option value="معوي">معوي</option>
-            <option value="دموي">دموي</option>
-            <option value="مزدوج">مزدوج</option>
-            <option value="طاعون">طاعون</option>
-            <option value="جدري">جدري</option>
-            <option value="قلاعية">قلاعية</option>
-          `;
-          vaccineSelect.style.marginLeft = "10px";
-          this.parentElement.appendChild(vaccineSelect);
-        }
-      };
+      dateInput.style.width = "45%";
+      const vaccineSelect = document.createElement("select");
+      vaccineSelect.style.width = "45%";
+      vaccineSelect.style.marginLeft = "10px";
+      vaccineSelect.innerHTML = `
+        <option value="">اختر نوع التطعيم</option>
+        <option value="معوي">معوي</option>
+        <option value="دموي">دموي</option>
+        <option value="مزدوج">مزدوج</option>
+        <option value="طاعون">طاعون</option>
+        <option value="جدري">جدري</option>
+        <option value="قلاعية">قلاعية</option>
+      `;
       div.appendChild(dateInput);
+      div.appendChild(vaccineSelect);
       container.appendChild(div);
     }
 
-    // دالة عرض الإشعارات مع أيقونة في أقصى اليمين
+    // دالة عرض الإشعارات
     function showNotification(msg, type = "success") {
       let notification = document.createElement("div");
       notification.className = "notification " + type;
-      
-      let textSpan = document.createElement("span");
-      textSpan.innerText = msg;
-      notification.appendChild(textSpan);
-      
-      let circle = document.createElement("div");
-      circle.className = "circle";
-      // استخدم رمز ✓ للنجاح ورمز ! للتنبيه أو الخطأ
-      circle.innerText = type === "success" ? "✓" : "!";
-      notification.appendChild(circle);
-      
+      if (type === "success") {
+        let textSpan = document.createElement("span");
+        textSpan.innerText = msg;
+        notification.appendChild(textSpan);
+        let circle = document.createElement("div");
+        circle.className = "circle";
+        circle.innerText = "✓";
+        notification.appendChild(circle);
+      } else if (type === "error") {
+        let circle = document.createElement("div");
+        circle.className = "circle";
+        circle.innerText = "×";
+        notification.appendChild(circle);
+        let textSpan = document.createElement("span");
+        textSpan.innerText = msg;
+        notification.appendChild(textSpan);
+      }
       let progress = document.createElement("div");
       progress.className = "progress";
       notification.appendChild(progress);
-      
       document.body.appendChild(notification);
-      
       setTimeout(() => {
         notification.style.animation = "fadeOut 2s forwards";
-        setTimeout(() => {
-          notification.remove();
-        }, 2000);
+        setTimeout(() => { notification.remove(); }, 2000);
       }, 3000);
     }
 
-    // دالة لحساب الوقت المتبقي بالايام والساعات مع عرض القيمة بالسالب إذا انتهى الموعد
-    function calculateRemainingTime(date) {
-      let diff = new Date(date) - new Date();
-      let days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      let hours = Math.floor((Math.abs(diff) % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      return `${days} أيام و ${hours} ساعة`;
-    }
-
-    // عند الضغط على زر الإرسال، يتم حفظ بيانات المربي
     function addBreeder() {
       let name = document.getElementById("breederName").value;
       let phone = document.getElementById("breederPhone").value;
       let location = document.getElementById("breederLocation").value;
-      let vaccine = document.getElementById("vaccineType").value;
-      let vaccinationDate = document.getElementById("vaccinationDate").value;
-      let nextAppointmentSelect = document.getElementById("nextAppointment").value;
-      let nextAppointment;
+      let fieldWorkType = document.getElementById("fieldWorkType").value;
       
-      if (!name || !phone || !vaccinationDate) {
-        showNotification("يرجى تعبئة الحقول كاملة!", "error");
+      // التأكد من تعبئة الحقول الأساسية
+      if (!name || !phone || !location || !fieldWorkType) {
+        showNotification("يرجى تعبئة الحقول الأساسية!", "error");
         return;
       }
       
-      let vacDate = new Date(vaccinationDate);
-      if (nextAppointmentSelect === "optional") {
-        let optionalDate = document.getElementById("optionalNextAppointment").value;
-        if (!optionalDate) {
-          showNotification("يرجى تعبئة الحقول كاملة!", "error");
-          return;
-        }
-        nextAppointment = new Date(optionalDate);
-      } else {
-        nextAppointment = new Date(vacDate.getTime() + parseInt(nextAppointmentSelect) * 24 * 60 * 60 * 1000);
-      }
-        
+      // بناء كائن السجل الأساسي
+      let record = { name, phone, location, fieldWorkType, previousAppointments: [] };
+      
+      // جمع بيانات المواعيد السابقة إن وُجدت
       let prevContainer = document.getElementById("previousAppointmentsContainer");
       let prevNodes = prevContainer.querySelectorAll(".prev-app");
-      let prevApps = [];
       prevNodes.forEach(div => {
         let dateVal = div.querySelector("input[type='date']").value;
-        let vaccineSelect = div.querySelector("select");
-        let vaccineVal = vaccineSelect ? vaccineSelect.value : "";
+        let vaccineVal = div.querySelector("select").value;
+        // إذا كانت قيمة التاريخ غير فارغة نضيفها
         if (dateVal) {
-          prevApps.push({ date: dateVal, vaccine: vaccineVal });
+          record.previousAppointments.push({ date: dateVal, vaccine: vaccineVal });
         }
       });
-      // إذا انتهى موعد الجاي (أي في الماضي) تتم إضافته تلقائيًا كموعد سابق
-      if(new Date(nextAppointment) < new Date()){
-        prevApps.push({ date: nextAppointment.toISOString().split("T")[0], vaccine });
+      
+      // معالجة كل قسم بناءً على نوع العمل الميداني
+      if (fieldWorkType === "تحصين") {
+        let vaccineType = document.getElementById("vaccination_vaccineType").value;
+        let vaccDate = document.getElementById("vaccination_date").value;
+        let vaccNext = document.getElementById("vaccination_nextAppointment").value;
+        if (!vaccineType || !vaccDate || !vaccNext) {
+          showNotification("يرجى تعبئة بيانات التحصين كاملة!", "error");
+          return;
+        }
+        record.details = {
+          vaccineType: vaccineType,
+          vaccinationDate: vaccDate,
+          nextAppointment: vaccNext
+        };
+        breeders.push(record);
+      }
+      else if (fieldWorkType === "تشخيص") {
+        let diseaseType = document.getElementById("diagnosis_diseaseType").value;
+        let treatment = document.getElementById("diagnosis_treatment").value;
+        let diagDate = document.getElementById("diagnosis_date").value;
+        let diagNext = document.getElementById("diagnosis_nextAppointment").value;
+        if (!diseaseType || !treatment || !diagDate || !diagNext) {
+          showNotification("يرجى تعبئة بيانات التشخيص كاملة!", "error");
+          return;
+        }
+        record.details = {
+          diseaseType: diseaseType,
+          treatment: treatment,
+          diagnosisDate: diagDate,
+          nextAppointment: diagNext
+        };
+        breeders.push(record);
+      }
+      else if (fieldWorkType === "ولادة") {
+        let animalType = document.getElementById("delivery_animalType").value;
+        let deliveryDate = document.getElementById("delivery_date").value;
+        let deliveryType = document.getElementById("delivery_type").value;
+        let deliveryTreatment = document.getElementById("delivery_treatment").value;
+        let deliveryNext = document.getElementById("delivery_nextAppointment").value;
+        if (!animalType || !deliveryDate || !deliveryType || !deliveryTreatment || !deliveryNext) {
+          showNotification("يرجى تعبئة بيانات الولادة كاملة!", "error");
+          return;
+        }
+        record.details = {
+          animalType: animalType,
+          deliveryDate: deliveryDate,
+          deliveryType: deliveryType,
+          treatment: deliveryTreatment,
+          nextAppointment: deliveryNext
+        };
+        breeders.push(record);
+      }
+      else if (fieldWorkType === "جراحة") {
+        let surgeryType = document.getElementById("surgery_type").value;
+        let surgeryTreatment = document.getElementById("surgery_treatment").value;
+        let surgeryDate = document.getElementById("surgery_date").value;
+        let surgeryNext = document.getElementById("surgery_nextAppointment").value;
+        if (!surgeryType || !surgeryTreatment || !surgeryDate || !surgeryNext) {
+          showNotification("يرجى تعبئة بيانات الجراحة كاملة!", "error");
+          return;
+        }
+        // بحسب الطلب بيانات الجراحة لا تُضاف إلى سجل المربين
+        showNotification("تم الإرسال بنجاح!", "success");
+        clearMainFields();
+        return;
+      }
+      else {
+        showNotification("نوع العمل الميداني غير معروف!", "error");
+        return;
       }
       
-      breeders.push({ name, phone, location, vaccine, vaccinationDate, nextAppointment, previousAppointments: prevApps });
       localStorage.setItem("breeders_" + localStorage.getItem("username"), JSON.stringify(breeders));
-
       showNotification("تم الإرسال بنجاح!", "success");
-      clearMainForm();
+      clearMainFields();
       showBreeders();
+    }
+
+    function clearMainFields() {
+      document.getElementById("breederName").value = "";
+      document.getElementById("breederPhone").value = "";
+      document.getElementById("breederLocation").value = "";
+      document.getElementById("fieldWorkType").selectedIndex = 0;
+      
+      // تنظيف أقسام العمل الميداني
+      document.getElementById("section_vaccination").classList.add("hidden");
+      document.getElementById("vaccination_vaccineType").selectedIndex = 0;
+      document.getElementById("vaccination_date").value = "";
+      document.getElementById("vaccination_nextAppointment").value = "";
+      
+      document.getElementById("section_diagnosis").classList.add("hidden");
+      document.getElementById("diagnosis_diseaseType").value = "";
+      document.getElementById("diagnosis_treatment").value = "";
+      document.getElementById("diagnosis_date").value = "";
+      document.getElementById("diagnosis_nextAppointment").value = "";
+      
+      document.getElementById("section_delivery").classList.add("hidden");
+      document.getElementById("delivery_animalType").selectedIndex = 0;
+      document.getElementById("delivery_date").value = "";
+      document.getElementById("delivery_type").selectedIndex = 0;
+      document.getElementById("delivery_treatment").value = "";
+      document.getElementById("delivery_nextAppointment").value = "";
+      
+      document.getElementById("section_surgery").classList.add("hidden");
+      document.getElementById("surgery_type").value = "";
+      document.getElementById("surgery_treatment").value = "";
+      document.getElementById("surgery_date").value = "";
+      document.getElementById("surgery_nextAppointment").value = "";
+      
+      // تنظيف قسم المواعيد السابقة
+      document.getElementById("previousAppointmentsContainer").innerHTML = "";
+    }
+
+    // دالة لحساب الوقت المتبقي بالأيام والساعات (عرض القائمة)
+    function calculateRemainingTime(date) {
+      if (!date) return "";
+      let diff = new Date(date) - new Date();
+      let sign = diff < 0 ? "-" : "";
+      diff = Math.abs(diff);
+      let days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      let hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      return sign + days + " يوم و " + hours + " ساعة";
+    }
+
+    // دالة لحساب الوقت المتبقي بالتفصيل (الأيام والساعات والدقائق والثواني)
+    function calculateRemainingTimeDetailed(date) {
+      if (!date) return "";
+      let diff = new Date(date) - new Date();
+      let sign = diff < 0 ? "-" : "";
+      diff = Math.abs(diff);
+      let days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      let hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      let minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      let seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      return sign + days + " يوم و " + hours + " ساعة و " + minutes + " دقيقة و " + seconds + " ثانية";
     }
 
     function showBreeders() {
       let recordsList = document.getElementById("records-list");
       recordsList.innerHTML = "";
       breeders.forEach((breeder, index) => {
+        let nextApp = (breeder.details && breeder.details.nextAppointment) ? breeder.details.nextAppointment : "";
+        let remainingTime = nextApp ? calculateRemainingTime(nextApp) : "";
         let recordDiv = document.createElement("div");
         recordDiv.className = "record";
-        // إضافة تأخير تدريجي لكل سجل
-        recordDiv.style.animationDelay = (index * 0.2) + "s";
         recordDiv.innerHTML = `
-          ${breeder.name} - الموعد الجاي: ${calculateRemainingTime(breeder.nextAppointment)}
+          ${breeder.name} - النوع: ${breeder.fieldWorkType} - الموعد القادم: ${remainingTime}
           <button class="edit-btn" onclick="editBreeder(${index}); event.stopPropagation();">تعديل</button>
           <button class="delete-btn" onclick="deleteBreeder(${index}); event.stopPropagation();">حذف</button>
         `;
@@ -743,42 +817,56 @@
       let breeder = breeders[index];
       document.getElementById("detailName").innerText = "اسم المربي: " + breeder.name;
       document.getElementById("detailPhone").innerText = "رقم الجوال: " + breeder.phone;
-      document.getElementById("detailLocation").innerText = "الموقع: " + (breeder.location || "غير محدد");
-      document.getElementById("detailVaccine").innerText = "نوع التطعيم: " + breeder.vaccine;
-      document.getElementById("detailNextAppointment").innerText = "الموعد الجاي: " + calculateRemainingTime(breeder.nextAppointment);
+      document.getElementById("detailLocation").innerText = "الموقع: " + breeder.location;
+      document.getElementById("detailFieldWork").innerText = "نوع العمل الميداني: " + breeder.fieldWorkType;
+      let detailExtra = document.getElementById("detailExtra");
+      detailExtra.innerHTML = "";
+      if (breeder.details) {
+        if (breeder.fieldWorkType === "تحصين") {
+          detailExtra.innerHTML = `
+            <p>نوع التطعيم: ${breeder.details.vaccineType}</p>
+            <p>تاريخ التحصين: ${breeder.details.vaccinationDate}</p>
+            <p>الموعد القادم: <span id="detailedCountdown">${calculateRemainingTimeDetailed(breeder.details.nextAppointment)}</span></p>
+          `;
+        } else if (breeder.fieldWorkType === "تشخيص") {
+          detailExtra.innerHTML = `
+            <p>نوع المرض: ${breeder.details.diseaseType}</p>
+            <p>نوع العلاج: ${breeder.details.treatment}</p>
+            <p>تاريخ التشخيص: ${breeder.details.diagnosisDate}</p>
+            <p>الموعد القادم: <span id="detailedCountdown">${calculateRemainingTimeDetailed(breeder.details.nextAppointment)}</span></p>
+          `;
+        } else if (breeder.fieldWorkType === "ولادة") {
+          detailExtra.innerHTML = `
+            <p>نوع الحيوان: ${breeder.details.animalType}</p>
+            <p>تاريخ الولادة: ${breeder.details.deliveryDate}</p>
+            <p>نوع الولادة: ${breeder.details.deliveryType}</p>
+            <p>العلاج: ${breeder.details.treatment}</p>
+            <p>الموعد القادم: <span id="detailedCountdown">${calculateRemainingTimeDetailed(breeder.details.nextAppointment)}</span></p>
+          `;
+        }
+      }
       let detailPrev = document.getElementById("detailPreviousAppointments");
       detailPrev.innerHTML = "";
       if (breeder.previousAppointments && breeder.previousAppointments.length > 0) {
         breeder.previousAppointments.forEach(app => {
-          let div = document.createElement("div");
-          div.style.position = "relative";
-          div.style.padding = "5px 0";
           let p = document.createElement("p");
           p.innerText = app.date + " - " + app.vaccine;
-          p.style.display = "inline-block";
-          p.style.margin = "0";
-          div.appendChild(p);
-          // زر لتبديل حالة الموعد (يسار = افتراضي، يمين = مفعل)
-          let toggleBtn = document.createElement("button");
-          toggleBtn.className = "toggle-btn left";
-          toggleBtn.innerText = "⇆";
-          toggleBtn.onclick = function(e) {
-            e.stopPropagation();
-            if (toggleBtn.classList.contains("left")) {
-              toggleBtn.classList.remove("left");
-              toggleBtn.classList.add("right");
-            } else {
-              toggleBtn.classList.remove("right");
-              toggleBtn.classList.add("left");
-            }
-          };
-          div.appendChild(toggleBtn);
-          detailPrev.appendChild(div);
+          detailPrev.appendChild(p);
         });
       } else {
-        detailPrev.innerText = "لايوجد";
+        detailPrev.innerText = "لا يوجد";
       }
       showSection("breederDetail");
+
+      // تحديث العد التنازلي بالتفصيل كل ثانية
+      if (breeder.details && breeder.details.nextAppointment) {
+        detailInterval = setInterval(function() {
+          let countdownElement = document.getElementById("detailedCountdown");
+          if (countdownElement) {
+            countdownElement.innerText = calculateRemainingTimeDetailed(breeder.details.nextAppointment);
+          }
+        }, 1000);
+      }
     }
 
     function deleteBreeder(index) {
@@ -793,13 +881,30 @@
       let breeder = breeders[index];
       document.getElementById("breederName").value = breeder.name;
       document.getElementById("breederPhone").value = breeder.phone;
-      document.getElementById("breederLocation").value = breeder.location || "";
-      document.getElementById("vaccineType").value = breeder.vaccine;
-      document.getElementById("vaccinationDate").value = breeder.vaccinationDate;
-      document.getElementById("nextAppointment").selectedIndex = 0;
+      document.getElementById("breederLocation").value = breeder.location;
+      document.getElementById("fieldWorkType").value = breeder.fieldWorkType;
+      handleFieldWorkChange();
+      if (breeder.fieldWorkType === "تحصين" && breeder.details) {
+        document.getElementById("vaccination_vaccineType").value = breeder.details.vaccineType;
+        document.getElementById("vaccination_date").value = breeder.details.vaccinationDate;
+        document.getElementById("vaccination_nextAppointment").value = breeder.details.nextAppointment;
+      }
+      else if (breeder.fieldWorkType === "تشخيص" && breeder.details) {
+        document.getElementById("diagnosis_diseaseType").value = breeder.details.diseaseType;
+        document.getElementById("diagnosis_treatment").value = breeder.details.treatment;
+        document.getElementById("diagnosis_date").value = breeder.details.diagnosisDate;
+        document.getElementById("diagnosis_nextAppointment").value = breeder.details.nextAppointment;
+      }
+      else if (breeder.fieldWorkType === "ولادة" && breeder.details) {
+        document.getElementById("delivery_animalType").value = breeder.details.animalType;
+        document.getElementById("delivery_date").value = breeder.details.deliveryDate;
+        document.getElementById("delivery_type").value = breeder.details.deliveryType;
+        document.getElementById("delivery_treatment").value = breeder.details.treatment;
+        document.getElementById("delivery_nextAppointment").value = breeder.details.nextAppointment;
+      }
       breeders.splice(index, 1);
       localStorage.setItem("breeders_" + localStorage.getItem("username"), JSON.stringify(breeders));
-      showSection('main');
+      showSection("main");
     }
 
     function searchBreeders() {
@@ -807,12 +912,13 @@
       let recordsList = document.getElementById("records-list");
       recordsList.innerHTML = "";
       breeders.forEach((breeder, index) => {
-        if (breeder.name.toLowerCase().includes(query) || breeder.vaccine.toLowerCase().includes(query)) {
+        if (breeder.name.toLowerCase().includes(query) || (breeder.fieldWorkType && breeder.fieldWorkType.toLowerCase().includes(query))) {
+          let nextApp = (breeder.details && breeder.details.nextAppointment) ? breeder.details.nextAppointment : "";
+          let remainingTime = nextApp ? calculateRemainingTime(nextApp) : "";
           let recordDiv = document.createElement("div");
           recordDiv.className = "record";
-          recordDiv.style.animationDelay = (index * 0.2) + "s";
           recordDiv.innerHTML = `
-            ${breeder.name} - الموعد الجاي: ${calculateRemainingTime(breeder.nextAppointment)}
+            ${breeder.name} - النوع: ${breeder.fieldWorkType} - الموعد القادم: ${remainingTime}
             <button class="edit-btn" onclick="editBreeder(${index}); event.stopPropagation();">تعديل</button>
             <button class="delete-btn" onclick="deleteBreeder(${index}); event.stopPropagation();">حذف</button>
           `;
@@ -829,14 +935,9 @@
       accountsList.innerHTML = "";
       for (let i = 0; i < localStorage.length; i++) {
         let key = localStorage.key(i);
-        if (key.startsWith("account_")) {
+        if (key.startsWith("account_") || key === "account_owner") {
           let accountRaw = localStorage.getItem(key);
-          let account;
-          if (key === "account_ownership") {
-            account = JSON.parse(atob(accountRaw));
-          } else {
-            account = JSON.parse(accountRaw);
-          }
+          let account = JSON.parse(accountRaw);
           if (account.banned) continue;
           let div = document.createElement("div");
           div.className = "record";
@@ -844,7 +945,7 @@
             ${account.username}
             <button class="details-btn" onclick="toggleAccountDetails('${key}', this.parentElement)">عرض التفاصيل</button>
           `;
-          if (account.username.toLowerCase() !== "admin") {
+          if (account.username !== "admin" && account.username !== "محمد بن علي") {
             innerHTML += `<button class="delete-btn" onclick="banUser('${key}')">تبنيد المستخدم</button>`;
           }
           div.innerHTML = innerHTML;
@@ -859,12 +960,7 @@
         detailsDiv.remove();
       } else {
         let accountRaw = localStorage.getItem(key);
-        let account;
-        if (key === "account_ownership") {
-            account = JSON.parse(atob(accountRaw));
-        } else {
-            account = JSON.parse(accountRaw);
-        }
+        let account = JSON.parse(accountRaw);
         let details = document.createElement("div");
         details.id = `account-details-${key}`;
         details.innerHTML = `
@@ -879,32 +975,23 @@
 
     function banUser(key) {
       let accountRaw = localStorage.getItem(key);
-      let account;
-      if (key === "account_ownership") {
-         account = JSON.parse(atob(accountRaw));
-      } else {
-         account = JSON.parse(accountRaw);
-      }
-      if (account.username.toLowerCase() === "admin") {
-        alert("لا يمكن تبنيد حساب المسؤول");
+      let account = JSON.parse(accountRaw);
+      if (account.username === "admin" || account.username === "محمد بن علي") {
+        alert("لا يمكن تبنيد هذا الحساب");
         return;
       }
       let reason = prompt("أدخل سبب التبنيد:");
       if (reason) {
         account.banned = true;
         account.banReason = reason;
-        if (account.username.toLowerCase() === "ownership") {
-          localStorage.setItem(key, btoa(JSON.stringify(account)));
-        } else {
-          localStorage.setItem(key, JSON.stringify(account));
-        }
+        localStorage.setItem(key, JSON.stringify(account));
         alert("تم تبنيد المستخدم " + account.username);
         showAdminPanel();
       }
     }
 
     function logout() {
-      if (confirm("متاكد من تسجيل الخروج؟")) {
+      if (confirm("متأكد من تسجيل الخروج؟")) {
         localStorage.removeItem("username");
         showSection("login");
         alert("تم تسجيل الخروج");
